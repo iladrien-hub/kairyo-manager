@@ -16,6 +16,7 @@ from core.user_interface import UserInterface
 def compile_ui():
     logging.info("compiling ui...")
 
+    # Ui Files
     for fn in glob("./**/resources/*.ui", recursive=True):
         fn = Path(fn)
         logging.info(f"found *.ui file in {fn}...")
@@ -29,6 +30,22 @@ def compile_ui():
         output = os.path.join(generated, f"{basename}.py")
 
         cmd = f"pyuic5 {fn.absolute()} -o {Path(output).absolute()} --import-from=."
+        os.system(cmd)
+
+    # Resources
+    for fn in glob("./**/resources/*.qrc", recursive=True):
+        fn = Path(fn)
+        logging.info(f"found *.qrc file in {fn}...")
+
+        parent = fn.parent.parent.absolute()
+        basename = os.path.splitext(fn.name)[0]
+
+        generated = os.path.join(parent, "generated")
+        os.makedirs(generated, exist_ok=True)
+
+        output = os.path.join(generated, f"{basename}_rc.py")
+
+        cmd = f"pyrcc5 {fn.absolute()} -o {Path(output).absolute()}"
         os.system(cmd)
 
     logging.info("ui compiled")
