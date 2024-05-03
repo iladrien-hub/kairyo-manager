@@ -6,7 +6,6 @@ from glob import glob
 from pathlib import Path
 
 from PyQt5 import QtWidgets
-from qt_material import apply_stylesheet
 
 from core.api import KairyoApi
 from core.extension import KairyoExtension
@@ -81,24 +80,17 @@ def start_app():
     from mainwindow import MainWindow
 
     app = QtWidgets.QApplication(sys.argv)
-    apply_stylesheet(app, theme='dark_teal.xml', extra={
-        # Density Scale
-        'density_scale': '-1',
-    })
-
-    # app.setStyleSheet(qdarkgraystyle.load_stylesheet())
-
-    window = MainWindow()
+    widget = MainWindow()
 
     api = KairyoApi(
-        user_interface=UserInterface(window)
+        user_interface=UserInterface(widget)
     )
     load_extensions(api)
 
     for ext in api.extensions:
         ext.on_start()
 
-    window.show()
+    widget.show()
     app.exec_()
 
 
