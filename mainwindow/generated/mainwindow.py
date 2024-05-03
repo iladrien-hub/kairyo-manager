@@ -22,6 +22,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.tabs = QtWidgets.QTabWidget(self.centralwidget)
+        self.tabs.setTabPosition(QtWidgets.QTabWidget.East)
         self.tabs.setObjectName("tabs")
         self.verticalLayout.addWidget(self.tabs)
         MainWindow.setCentralWidget(self.centralwidget)

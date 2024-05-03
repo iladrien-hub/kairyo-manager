@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="mainwindow">
+    <file>xmark.svg</file>
+  </qresource>
+</RCC>
