@@ -1,11 +1,4 @@
-from typing import NamedTuple, Dict, List
-
-# from css_parser.css import CSSStyleSheet, CSSStyleDeclaration, CSSStyleRule
-# from css_parser.serialize import Preferences, CSSSerializer
-
-
-# from cssutils.css import CSSStyleSheet, CSSStyleRule, CSSStyleDeclaration
-# from cssutils.serialize import Preferences, CSSSerializer
+from typing import NamedTuple, List
 
 from core.styling.cssrule import CssRule
 
