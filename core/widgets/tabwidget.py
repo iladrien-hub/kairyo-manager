@@ -93,6 +93,8 @@ class TabWidget(QtWidgets.QWidget):
         self._layout.addLayout(self._tabs_layout)
         self._layout.addWidget(self._stack_widget)
         self._layout.setContentsMargins(0, 0, 0, 0)
+        self._layout.setSpacing(0)
+
         self.setLayout(self._layout)
 
     # noinspection PyPep8Naming
