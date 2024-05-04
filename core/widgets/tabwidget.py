@@ -26,6 +26,7 @@ class TabWidget(QtWidgets.QWidget):
             'border': 'none',
         }),
     ])
+
     _TAB_POSITION_PARAMS = {
         QtWidgets.QTabWidget.TabPosition.North: (
             QtWidgets.QBoxLayout.Direction.Down,
@@ -49,12 +50,28 @@ class TabWidget(QtWidgets.QWidget):
         ),
     }
 
+    _SPACER_ORIENTATION = {
+        QtWidgets.QTabWidget.TabPosition.North: (
+            QSizePolicy.Expanding, QSizePolicy.Minimum
+        ),
+        QtWidgets.QTabWidget.TabPosition.South: (
+            QSizePolicy.Expanding, QSizePolicy.Minimum
+        ),
+        QtWidgets.QTabWidget.TabPosition.East: (
+            QSizePolicy.Minimum, QSizePolicy.Expanding
+        ),
+        QtWidgets.QTabWidget.TabPosition.West: (
+            QSizePolicy.Minimum, QSizePolicy.Expanding
+        ),
+    }
+
     def __init__(self):
         super().__init__()
 
         self._tabs: List[OrientedButton] = []
         self._tabs_rotation: OrientedButton.Orientation = OrientedButton.Orientation.Normal
 
+        self._always_open: bool = False
         self._stack_widget = QtWidgets.QStackedWidget()
 
         self._tabs_layout = QtWidgets.QHBoxLayout()
@@ -66,6 +83,7 @@ class TabWidget(QtWidgets.QWidget):
     # noinspection PyPep8Naming
     def setupUi(self):
         self._stack_widget.setVisible(False)
+
         self._tabs_layout.setContentsMargins(0, 0, 0, 0)
         self._tabs_layout.setSpacing(0)
 
@@ -92,21 +110,31 @@ class TabWidget(QtWidgets.QWidget):
         self._stack_widget.addWidget(w)
 
         button.clicked.connect(partial(self.onTabClicked, button))  # noqa
+        self.updateState()
 
     # noinspection PyPep8Naming
     def updateState(self):
         checked = next(filter(lambda x: x.isChecked(), self._tabs), None)
         if checked is None:
-            self._stack_widget.setVisible(False)
-            return
+            if self._always_open and self._tabs:
+                checked = self._tabs[0]
+                checked.setChecked(True)
+            else:
+                self._stack_widget.setVisible(False)
+                return
 
         self._stack_widget.setVisible(True)
         index = self._tabs.index(checked)
         self._stack_widget.setCurrentIndex(index)
+        self._stack_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
     # noinspection PyPep8Naming
     def onTabClicked(self, b: QtWidgets.QPushButton):
         try:
+            if self._always_open and not b.isChecked():
+                b.setChecked(True)
+                return
+
             for btn in self._tabs:
                 if btn is not b:
                     btn.setChecked(False)
@@ -117,11 +145,22 @@ class TabWidget(QtWidgets.QWidget):
 
     # noinspection PyPep8Naming
     def setTabPosition(self, a0: QtWidgets.QTabWidget.TabPosition):
-        layout_direction, tab_direction, tab_rotation = self._TAB_POSITION_PARAMS[a0]
+        layout_direction, tab_direction, self._tabs_rotation = self._TAB_POSITION_PARAMS[a0]
+
+        for i in range(self._tabs_layout.count()):
+            item = self._tabs_layout.itemAt(i)
+            if isinstance(item, QtWidgets.QSpacerItem):
+                self._tabs_layout.removeItem(item)
+                spacer = QtWidgets.QSpacerItem(1, 1, *self._SPACER_ORIENTATION[a0])
+                self._tabs_layout.insertItem(i, spacer)
 
         self._layout.setDirection(layout_direction)
         self._tabs_layout.setDirection(tab_direction)
         for b in self._tabs:
-            b.setOrientation(tab_rotation)
+            b.setOrientation(self._tabs_rotation)
 
-        # self._stack_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+    # noinspection PyPep8Naming
+    def setAlwaysOpen(self, b: bool):
+        self._always_open = b
+        if self._always_open:
+            self.updateState()
