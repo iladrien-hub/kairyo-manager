@@ -1,8 +1,9 @@
 from enum import Enum
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtGui, QtCore
 
 
+# noinspection PyPep8Naming
 class OrientedButton(QtWidgets.QPushButton):
     class Orientation(Enum):
         Normal = 0
@@ -12,6 +13,7 @@ class OrientedButton(QtWidgets.QPushButton):
     def __init__(self, text, parent, orientation: Orientation = Orientation.Normal):
         super(OrientedButton, self).__init__(text, parent)
         self.orientation = orientation
+        self.icon_spacing = 6
 
     def paintEvent(self, event):
         painter = QtWidgets.QStylePainter(self)
@@ -21,7 +23,24 @@ class OrientedButton(QtWidgets.QPushButton):
         elif self.orientation == self.Orientation.West:
             painter.rotate(270)
             painter.translate(-1 * self.height(), 0)
-        painter.drawControl(QtWidgets.QStyle.CE_PushButton, self.getSyleOptions())
+
+        options = self.getStyleOptions()
+        if not options.icon.isNull():
+            sz = options.iconSize
+            tmp = options.icon.pixmap(sz)
+
+            sz.setWidth(sz.width() + self.icon_spacing)
+
+            exp = QtGui.QPixmap(sz)
+            exp.fill(QtCore.Qt.transparent)  # noqa
+
+            p = QtGui.QPainter(exp)
+            p.drawPixmap(QtCore.QRect(QtCore.QPoint(), tmp.size()), tmp)
+            p.end()
+
+            options.icon = QtGui.QIcon(exp)
+
+        painter.drawControl(QtWidgets.QStyle.CE_PushButton, options)  # noqa
 
     # def minimumSizeHint(self):
     #     size = super(RotatedButton, self).minimumSizeHint()
@@ -31,11 +50,13 @@ class OrientedButton(QtWidgets.QPushButton):
 
     def sizeHint(self):
         size = super(OrientedButton, self).sizeHint()
+        if not self.icon().isNull():
+            size.setWidth(size.width() + self.icon_spacing)
         if self.orientation in (self.Orientation.East, self.Orientation.West):
             size.transpose()
         return size
 
-    def getSyleOptions(self):
+    def getStyleOptions(self):
         options = QtWidgets.QStyleOptionButton()
         options.initFrom(self)
         size = options.rect.size()
@@ -52,11 +73,11 @@ class OrientedButton(QtWidgets.QPushButton):
         if self.isDefault():
             options.features |= QtWidgets.QStyleOptionButton.DefaultButton
         if self.isDown() or (self.menu() and self.menu().isVisible()):
-            options.state |= QtWidgets.QStyle.State_Sunken
+            options.state |= QtWidgets.QStyle.State_Sunken  # noqa
         if self.isChecked():
-            options.state |= QtWidgets.QStyle.State_On
+            options.state |= QtWidgets.QStyle.State_On  # noqa
         if not self.isFlat() and not self.isDown():
-            options.state |= QtWidgets.QStyle.State_Raised
+            options.state |= QtWidgets.QStyle.State_Raised  # noqa
 
         options.text = self.text()
         options.icon = self.icon()
