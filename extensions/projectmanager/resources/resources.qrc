@@ -1,5 +1,10 @@
 <RCC>
   <qresource prefix="projectmanager">
     <file>folder.svg</file>
+    <file>list.svg</file>
+    <file>info.svg</file>
+    <file>bookmark.svg</file>
+    <file>memo-circle-info.svg</file>
+    <file>code-branch.svg</file>
   </qresource>
 </RCC>
