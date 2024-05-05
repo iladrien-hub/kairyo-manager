@@ -114,6 +114,8 @@ class TabWidget(QtWidgets.QWidget):
         button.clicked.connect(partial(self.onTabClicked, button))  # noqa
         self.updateState()
 
+        return self._tabs.index(button)
+
     # noinspection PyPep8Naming
     def updateState(self):
         checked = next(filter(lambda x: x.isChecked(), self._tabs), None)
@@ -169,7 +171,6 @@ class TabWidget(QtWidgets.QWidget):
 
     # noinspection PyPep8Naming
     def setTabIcon(self, index: int, icon: QtGui.QIcon):
-        print(index, icon)
         btn = self._tabs[index]
         btn.setIcon(icon)
         btn.setIconSize(QtCore.QSize(12, 12))
