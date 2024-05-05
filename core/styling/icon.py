@@ -12,6 +12,6 @@ def load_icon(fn: str, fill: str = None):
     q_icon.addPixmap(img, QIcon.Selected)
     q_icon.addPixmap(img, QIcon.Active)
     q_icon.addPixmap(img, QIcon.Disabled)
-    q_icon.addPixmap(QPixmap(fn), QIcon.Normal)
+    q_icon.addPixmap(img, QIcon.Normal)
 
     return q_icon
