@@ -1,7 +1,7 @@
 from functools import partial
 from typing import List
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QSizePolicy
 
 from core.styling import make_stylesheet, Style
@@ -166,3 +166,10 @@ class TabWidget(QtWidgets.QWidget):
         self._always_open = b
         if self._always_open:
             self.updateState()
+
+    # noinspection PyPep8Naming
+    def setTabIcon(self, index: int, icon: QtGui.QIcon):
+        print(index, icon)
+        btn = self._tabs[index]
+        btn.setIcon(icon)
+        btn.setIconSize(QtCore.QSize(12, 12))
