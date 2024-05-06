@@ -1,3 +1,4 @@
+import ctypes
 import inspect
 import logging
 import os
@@ -5,10 +6,11 @@ import sys
 from glob import glob
 from pathlib import Path
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtGui
 
 from core.api import KairyoApi
 from core.extension import KairyoExtension
+from core.styling import make_stylesheet, Style
 from core.user_interface import UserInterface
 
 
@@ -78,19 +80,27 @@ def load_extensions(api: KairyoApi):
 
 def start_app():
     from mainwindow import MainWindow
+    myappid = 'mycompany.myproduct.subproduct.version'  # arbitrary string
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
     app = QtWidgets.QApplication(sys.argv)
-    widget = MainWindow()
+    app.setStyleSheet(make_stylesheet([Style('QLabel', {'color': 'white'})]))
+
+    win = MainWindow()
 
     api = KairyoApi(
-        user_interface=UserInterface(widget)
+        user_interface=UserInterface(win)
     )
     load_extensions(api)
 
     for ext in api.extensions:
         ext.on_start()
 
-    widget.show()
+    win.setWindowIcon(QtGui.QIcon(":/mainwindow/Icon512.ico"))
+
+    win.show()
+    win.resize(1024, 640)
+
     app.exec_()
 
 

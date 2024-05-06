@@ -29,11 +29,11 @@ class TitleBar(QtWidgets.QFrame):
         self._layout = QtWidgets.QHBoxLayout()
 
         self._menuBar = MenuBar()
-        self._label = QtWidgets.QLabel("aqua - 00013-3064614141.png")
+        self._label = QtWidgets.QLabel()
+        self.setLabel("aqua - 00013-3064614141.png")
 
-        self._appIcon = QtGui.QIcon(":/mainwindow/Icon512.ico").pixmap(18, 18)
         self._appIconLabel = QtWidgets.QLabel()
-        self._appIconLabel.setPixmap(self._appIcon)
+
         self._appIconLabel.setStyleSheet(self._ICON_STYLE)
 
         self.setupUi()
@@ -71,3 +71,10 @@ class TitleBar(QtWidgets.QFrame):
             # return QRect(self.appLogoLabel.width(), 0,
             #              self.width() - self.appLogoLabel.width(),
             #              self.height()).contains(QPoint(x, y))
+
+    def setLabel(self, text: str):
+        self._label.setText(text)
+        self.window().setWindowTitle(text)
+
+    def setWindowIcon(self, icon: QtGui.QIcon):
+        self._appIconLabel.setPixmap(icon.pixmap(18, 18))
