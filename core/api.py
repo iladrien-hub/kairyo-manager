@@ -4,12 +4,15 @@ if typing.TYPE_CHECKING:
     from .extension import KairyoExtension
     from .user_interface import UserInterface
 
+from .storage import KairyoStorage
+
 
 class KairyoApi:
 
     def __init__(self, *, user_interface: 'UserInterface'):
         self.__extensions: typing.List['KairyoExtension'] = []
         self.__user_interface: 'UserInterface' = user_interface
+        self.__storage: 'KairyoStorage' = KairyoStorage()
 
     def register_extension(self, ext: 'KairyoExtension'):
         self.__extensions.append(ext)

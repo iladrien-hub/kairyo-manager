@@ -27,6 +27,12 @@ class TabWidget(QtWidgets.QWidget):
         }),
     ])
 
+    _STYLE_TAB_WINDOW = make_stylesheet([
+        Style("QStackedWidget", {
+            'border': '1px solid #212121'
+        })
+    ])
+
     _TAB_POSITION_PARAMS = {
         QtWidgets.QTabWidget.TabPosition.North: (
             QtWidgets.QBoxLayout.Direction.Down,
@@ -65,6 +71,36 @@ class TabWidget(QtWidgets.QWidget):
         ),
     }
 
+    _TABS_WIDGET_STYLES = {
+        QtWidgets.QTabWidget.TabPosition.North: make_stylesheet([
+            Style('QWidget', {
+                'border-bottom': '1px solid #212121'
+            })
+        ]),
+        QtWidgets.QTabWidget.TabPosition.South: make_stylesheet([
+            Style('QWidget', {
+                'border-top': '1px solid #212121'
+            })
+        ]),
+        QtWidgets.QTabWidget.TabPosition.East: make_stylesheet([
+            Style('QWidget', {
+                'border-left': '1px solid #212121'
+            })
+        ]),
+        QtWidgets.QTabWidget.TabPosition.West: make_stylesheet([
+            Style('QWidget', {
+                'border-right': '1px solid #212121'
+            })
+        ]),
+    }
+
+    _TABS_WIDGET_CONTENT_MARGINS = {
+        QtWidgets.QTabWidget.TabPosition.North: (0, 0, 0, 1),
+        QtWidgets.QTabWidget.TabPosition.South: (0, 1, 0, 0),
+        QtWidgets.QTabWidget.TabPosition.West: (0, 0, 1, 0),
+        QtWidgets.QTabWidget.TabPosition.East: (1, 0, 0, 0),
+    }
+
     def __init__(self):
         super().__init__()
 
@@ -75,6 +111,7 @@ class TabWidget(QtWidgets.QWidget):
         self._stack_widget = QtWidgets.QStackedWidget()
 
         self._tabs_layout = QtWidgets.QHBoxLayout()
+        self._tabs_widget = QtWidgets.QWidget()
         self._layout = QtWidgets.QBoxLayout(QtWidgets.QBoxLayout.Direction.Up)
 
         self.setTabPosition(QtWidgets.QTabWidget.North)
@@ -83,14 +120,17 @@ class TabWidget(QtWidgets.QWidget):
     # noinspection PyPep8Naming
     def setupUi(self):
         self._stack_widget.setVisible(False)
+        # self._stack_widget.setStyleSheet(self._STYLE_TAB_WINDOW)
 
-        self._tabs_layout.setContentsMargins(0, 0, 0, 0)
+        self._tabs_layout.setContentsMargins(1, 1, 1, 1)
         self._tabs_layout.setSpacing(0)
 
         spacer = QtWidgets.QSpacerItem(1, 1, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self._tabs_layout.addItem(spacer)
 
-        self._layout.addLayout(self._tabs_layout)
+        self._tabs_widget.setLayout(self._tabs_layout)
+
+        self._layout.addWidget(self._tabs_widget)
         self._layout.addWidget(self._stack_widget)
         self._layout.setContentsMargins(0, 0, 0, 0)
         self._layout.setSpacing(0)
@@ -162,6 +202,9 @@ class TabWidget(QtWidgets.QWidget):
         self._tabs_layout.setDirection(tab_direction)
         for b in self._tabs:
             b.setOrientation(self._tabs_rotation)
+
+        self._tabs_widget.setStyleSheet(self._TABS_WIDGET_STYLES[a0])
+        self._tabs_layout.setContentsMargins(*self._TABS_WIDGET_CONTENT_MARGINS[a0])
 
     # noinspection PyPep8Naming
     def setAlwaysOpen(self, b: bool):
