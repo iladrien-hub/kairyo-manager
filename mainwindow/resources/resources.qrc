@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="mainwindow">
     <file>xmark.svg</file>
+    <file>window-minimize.svg</file>
+    <file>window-maximize.svg</file>
+    <file>window-restore.svg</file>
   </qresource>
 </RCC>

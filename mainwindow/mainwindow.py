@@ -1,10 +1,11 @@
 from PyQt5 import QtWidgets
 
-from .generated.mainwindow import Ui_MainWindow
 from core.styling import make_stylesheet, Style
+from core.widgets import TabWidget
+from mainwindow.widgets.windows import FramelessWindow
 
 
-class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
+class MainWindow(FramelessWindow):
     _STYLE = make_stylesheet([
         Style('*', {
             'background-color': '#2e2e2e'
@@ -12,6 +13,11 @@ class MainWindow(Ui_MainWindow, QtWidgets.QMainWindow):
     ])
 
     def __init__(self):
-        super().__init__()
-        self.setupUi(self)
+        super().__init__(None)
         self.setStyleSheet(self._STYLE)
+
+        self.tabs = TabWidget()
+        self.tabs.setAlwaysOpen(True)
+        self.tabs.setTabPosition(QtWidgets.QTabWidget.TabPosition.East)
+
+        self.addContentWidget(self.tabs)
