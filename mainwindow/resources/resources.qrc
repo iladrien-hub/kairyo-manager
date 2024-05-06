@@ -4,5 +4,6 @@
     <file>window-minimize.svg</file>
     <file>window-maximize.svg</file>
     <file>window-restore.svg</file>
+    <file>Icon512.ico</file>
   </qresource>
 </RCC>
