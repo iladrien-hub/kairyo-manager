@@ -3,6 +3,11 @@ import time
 from typing import Union, Dict
 
 from core.project.image import ProjectImage
+from core.util.filedict import NamedFileDict, field
+
+
+class ProjectMeta(NamedFileDict):
+    name: str = field(default="")
 
 
 class Project:
@@ -17,6 +22,8 @@ class Project:
         self._images: Dict[str, ProjectImage] = dict()
         for dir_name in os.listdir(self._images_dir):
             self._images[dir_name] = ProjectImage(self, dir_name)
+
+        self._meta = ProjectMeta(os.path.join(self._root_dir, 'project.meta.json'))
 
     def create_image(self, name: str):
         if name in self._images:
@@ -37,3 +44,7 @@ class Project:
     @property
     def images_dir(self):
         return self._images_dir
+
+    @property
+    def meta(self) -> ProjectMeta:
+        return self._meta
