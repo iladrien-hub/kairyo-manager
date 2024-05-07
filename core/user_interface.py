@@ -33,3 +33,6 @@ class UserInterface:
 
         return dialog
 
+    @property
+    def window(self):
+        return self._window
