@@ -16,7 +16,7 @@ else:
     raise Exception("Windows API is not supported on non Windows OS.")
 
 from qtpy.QtWidgets import QApplication
-from qtpy.QtCore import QMetaObject, Slot
+from qtpy.QtCore import QMetaObject
 
 from .base import FramelessWindowBase
 

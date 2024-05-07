@@ -1,6 +1,6 @@
 import typing
 
-from PyQt5.QtCore import QSettings, Qt
+from PyQt5.QtCore import QSettings
 
 if typing.TYPE_CHECKING:
     from .extension import KairyoExtension

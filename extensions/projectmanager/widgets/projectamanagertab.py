@@ -1,9 +1,6 @@
-from enum import Enum
-
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt, QMetaObject, QSettings
 from PyQt5.QtWidgets import QLabel, QSizePolicy
-from PyQt5 import QtCore
 
 from core.styling import make_stylesheet, Style
 from core.styling.icon import load_icon

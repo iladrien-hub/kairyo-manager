@@ -1,6 +1,6 @@
-from qtpy.QtWidgets import QApplication, QWidget, QVBoxLayout, QSizePolicy, QDialog
+from qtpy.QtCore import Qt, QMetaObject, QSize, Signal
 from qtpy.QtGui import QIcon
-from qtpy.QtCore import Qt, QMetaObject, QEvent, QSize, Signal, Slot
+from qtpy.QtWidgets import QApplication, QWidget, QVBoxLayout, QSizePolicy, QDialog
 
 from mainwindow.widgets.titlebar.titlebar import TitleBar
 

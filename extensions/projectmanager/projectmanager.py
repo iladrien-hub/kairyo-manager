@@ -1,7 +1,3 @@
-import os
-
-from PyQt5 import QtWidgets
-
 from core.extension import KairyoExtension
 from core.styling.icon import load_icon
 from extensions.projectmanager.widgets.projectamanagertab import ProjectManagerTab

@@ -1,2 +1,2 @@
-from .mainwindow import MainWindow
 from .generated import resources_rc
+from .mainwindow import MainWindow

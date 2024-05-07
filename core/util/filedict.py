@@ -1,7 +1,7 @@
 import os
+import time
 from typing import Union, Callable, Any
 
-import time
 import ujson
 
 _MISSING = object()

@@ -1,2 +1,2 @@
-from .tabwidget import TabWidget
 from .orientedbutton import OrientedButton
+from .tabwidget import TabWidget

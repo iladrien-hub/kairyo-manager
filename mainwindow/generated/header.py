@@ -29,4 +29,3 @@ class Ui_Form(object):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
         self.toolButton.setText(_translate("Form", "..."))
-from . import resources_rc
