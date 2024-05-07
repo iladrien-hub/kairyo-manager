@@ -5,6 +5,7 @@ from PyQt5.QtCore import QSettings
 if typing.TYPE_CHECKING:
     from .extension import KairyoExtension
     from .user_interface import UserInterface
+    from .styling.theme import DarkTheme
 
 from .storage import KairyoStorage
 
@@ -12,7 +13,7 @@ from .storage import KairyoStorage
 class KairyoApi:
     __instance = None
 
-    def __init__(self, *, user_interface: 'UserInterface'):
+    def __init__(self, *, user_interface: 'UserInterface', theme: 'DarkTheme'):
         if KairyoApi.__instance:
             raise RuntimeError(f"only one instance of {self.__class__.__name__} can be created")
         KairyoApi.__instance = self
@@ -21,6 +22,7 @@ class KairyoApi:
         self.__user_interface: 'UserInterface' = user_interface
         self.__storage: 'KairyoStorage' = KairyoStorage()
         self.__settings: QSettings = QSettings('config.ini', QSettings.IniFormat)
+        self.__theme: 'DarkTheme' = theme
 
     def register_extension(self, ext: 'KairyoExtension'):
         self.__extensions.append(ext)
@@ -40,3 +42,7 @@ class KairyoApi:
     @property
     def settings(self):
         return self.__settings
+
+    @property
+    def theme(self):
+        return self.__theme

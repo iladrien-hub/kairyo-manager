@@ -11,7 +11,6 @@ from PyQt5.QtCore import QSize, QPoint
 
 from core.api import KairyoApi
 from core.extension import KairyoExtension
-from core.styling import make_stylesheet, Style
 from core.styling.theme import DarkTheme
 from core.user_interface import UserInterface
 
@@ -96,12 +95,13 @@ def start_app():
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
     app = QtWidgets.QApplication(sys.argv)
-    app.setStyleSheet(make_stylesheet([Style('QLabel', {'color': 'white'})]))
+    # app.setStyleSheet(make_stylesheet([Style('QLabel', {'color': 'white'})]))
 
     win = MainWindow()
 
     api = KairyoApi(
-        user_interface=UserInterface(win)
+        user_interface=UserInterface(win),
+        theme=DarkTheme.from_xml("colors.xml")
     )
     size = api.settings.value('mainWindow/size', QSize(1024, 640), QSize)
     pos = api.settings.value('mainWindow/position', None, QPoint)
@@ -109,8 +109,7 @@ def start_app():
 
     load_extensions(api)
 
-    theme = DarkTheme.from_xml("colors.xml")
-    win.setStyleSheet(theme.make_stylesheet())
+    win.setStyleSheet(api.theme.make_stylesheet())
 
     for ext in api.extensions:
         ext.on_setup_ui()
