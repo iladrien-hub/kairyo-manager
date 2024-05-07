@@ -1,3 +1,5 @@
+import os
+
 from PyQt5 import QtWidgets
 
 from core.extension import KairyoExtension
@@ -10,7 +12,7 @@ class ProjectManagerExtension(KairyoExtension):
     def __init__(self, api):
         super().__init__(api)
 
-        self._main_tab = ProjectManagerTab()
+        self._main_tab = ProjectManagerTab(self.api.settings)
 
     def on_setup_ui(self):
         # Registering new tab
