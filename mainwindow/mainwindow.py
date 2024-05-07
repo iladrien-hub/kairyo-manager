@@ -19,6 +19,23 @@ class MainWindow(FramelessWindow):
 
         self.addContentWidget(self.tabs)
 
+    def init(self):
+        storage = KairyoApi.instance().storage
+        storage.projectChanged.connect(self.on_storage_projectChanged)
+        storage.imageChanged.connect(self.on_storage_imageChanged)
+
+    def updateTitle(self):
+        title = []
+        storage = KairyoApi.instance().storage
+
+        if storage.project:
+            title.append(storage.project.meta.name)
+            if storage.image:
+                pass
+
+        title = " - ".join(title)
+        self.titlebar().setLabel(title)
+
     def resizeEvent(self, a0):
         super(MainWindow, self).resizeEvent(a0)
         try:
@@ -44,3 +61,9 @@ class MainWindow(FramelessWindow):
             api = KairyoApi.instance()
             if api:
                 api.settings.setValue('mainWindow/maximized', self.isMaximized())
+
+    def on_storage_projectChanged(self):
+        self.updateTitle()
+
+    def on_storage_imageChanged(self):
+        self.updateTitle()

@@ -17,7 +17,6 @@ class TitleBar(QtWidgets.QFrame):
         self._menuBar = MenuBar()
         self._label = QtWidgets.QLabel()
         self._label.setObjectName('appTitle')
-        self.setLabel("aqua - 00013-3064614141.png")
 
         self._spacer = QtWidgets.QSpacerItem(24, 1, QSizePolicy.Fixed, QSizePolicy.Fixed)
 
