@@ -127,6 +127,7 @@ def start_app():
     win.titlebar().updateButtons()
 
     app.focusChanged.connect(on_focus_changed)
+    api.open_last_project()
 
     app.exec_()
 
