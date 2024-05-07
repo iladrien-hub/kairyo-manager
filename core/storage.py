@@ -24,6 +24,7 @@ class KairyoStorage(QtCore.QObject):
         if value != self.__project:
             self.__project = value
             self.projectChanged.emit()
+            self.image = None
 
     @property
     def image(self):
