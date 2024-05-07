@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtCore import QPoint, QRect
+from PyQt5.QtWidgets import QSizePolicy
 
 from core.widgets.menubar import MenuBar
 from .buttons import TitleBarButtons
@@ -18,6 +19,8 @@ class TitleBar(QtWidgets.QFrame):
         self._label.setObjectName('appTitle')
         self.setLabel("aqua - 00013-3064614141.png")
 
+        self._spacer = QtWidgets.QSpacerItem(24, 1, QSizePolicy.Fixed, QSizePolicy.Fixed)
+
         self._appIconLabel = QtWidgets.QLabel()
         self._appIconLabel.setObjectName("appIcon")
 
@@ -29,6 +32,7 @@ class TitleBar(QtWidgets.QFrame):
 
         self._layout.addWidget(self._appIconLabel)
         self._layout.addWidget(self._menuBar)
+        self._layout.addItem(self._spacer)
         self._layout.addWidget(self._label)
 
         self._layout.insertStretch(50)
@@ -72,3 +76,11 @@ class TitleBar(QtWidgets.QFrame):
 
     def updateButtons(self):
         self._buttons.updateMaximized()
+
+    def hideMenu(self, b: bool):
+        self._menuBar.setVisible(not b)
+        self._spacer.changeSize(0, 24 if b else 0)
+
+    def hideSizeControls(self, b: bool):
+        self._buttons.setResizeButtonVisible(not b)
+        self._buttons.setMinimizeButtonVisible(not b)

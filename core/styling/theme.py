@@ -102,7 +102,7 @@ class DarkTheme(object):
                 'padding-right': '12px'
             }),
             Style('QLabel#appTitle', {
-                'padding-left': '18px',
+                'padding-left': '0px',
                 'font-size': '11px',
                 'color': self.text_100
             }),

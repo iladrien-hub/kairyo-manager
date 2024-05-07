@@ -1,6 +1,9 @@
+from PyQt5.QtWidgets import QLabel
+
 from core.extension import KairyoExtension
 from core.styling.icon import load_icon
 from extensions.projectmanager.widgets.projectamanagertab import ProjectManagerTab
+from mainwindow.widgets.windows import FramelessWindow
 
 
 class ProjectManagerExtension(KairyoExtension):
@@ -24,4 +27,11 @@ class ProjectManagerExtension(KairyoExtension):
         new_project.triggered.connect(self.on_create_project)
 
     def on_create_project(self):
-        print("asd")
+        dialog = self.api.user_interface.create_dialog('Create Project', QLabel('u sure?'))
+
+        dialog.show()
+
+        # dialog = FramelessWindow(self.api.user_interface._window)
+        #
+        # dialog.addContentWidget(QLabel('Hello World!'))
+        # dialog.show()

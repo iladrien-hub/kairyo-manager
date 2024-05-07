@@ -53,6 +53,12 @@ class TitleBarButtons(QtWidgets.QWidget):
 
         self.updateMaximized()
 
+    def setResizeButtonVisible(self, b: bool):
+        self._resizeButton.setVisible(b)
+
+    def setMinimizeButtonVisible(self, b: bool):
+        self._minimizeButton.setVisible(b)
+
     def updateMaximized(self):
         maximized = self.window().isMaximized()
         if maximized:

@@ -2,6 +2,8 @@ import typing
 
 from PyQt5 import QtWidgets, QtGui
 
+from mainwindow.widgets.windows import FramelessWindow
+
 if typing.TYPE_CHECKING:
     from mainwindow import MainWindow
 
@@ -17,3 +19,17 @@ class UserInterface:
 
     def add_menu(self, title: str):
         return self._window.titlebar().addMenu(title)
+
+    def create_dialog(self, title: str, w: QtWidgets.QWidget):
+        dialog = FramelessWindow(self._window)
+        dialog.setWindowIcon(QtGui.QIcon(":/mainwindow/Icon512.ico"))
+        dialog.addContentWidget(w)
+
+        titlebar = dialog.titlebar()
+
+        titlebar.setLabel(title)
+        titlebar.hideMenu(True)
+        titlebar.hideSizeControls(True)
+
+        return dialog
+
