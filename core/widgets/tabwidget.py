@@ -1,5 +1,5 @@
 from functools import partial
-from typing import List
+from typing import List, Optional
 
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QSizePolicy
@@ -8,6 +8,8 @@ from .orientedbutton import OrientedButton
 
 
 class TabWidget(QtWidgets.QWidget):
+    currentTabChanged = QtCore.pyqtSignal(int)
+
     _TAB_POSITION_PARAMS = {
         QtWidgets.QTabWidget.TabPosition.North: (
             QtWidgets.QBoxLayout.Direction.Down,
@@ -65,6 +67,7 @@ class TabWidget(QtWidgets.QWidget):
 
         self._tabs: List[OrientedButton] = []
         self._tabsRotation: OrientedButton.Orientation = OrientedButton.Orientation.Normal
+        self._currentTab: Optional[int] = None
 
         self._alwaysOpen: bool = False
         self._stackWidget = QtWidgets.QStackedWidget()
@@ -94,14 +97,13 @@ class TabWidget(QtWidgets.QWidget):
 
         self.setLayout(self._layout)
 
-    # noinspection PyPep8Naming
     def addTab(self, w: QtWidgets.QWidget, name: str):
-        # button = QtWidgets.QPushButton(name)
         button = OrientedButton(name, self, orientation=self._tabsRotation)
         button.setText(name)
         button.setCheckable(True)
         button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         button.setObjectName("tabButton")
+        button.setMinimumSize(21, 21)
 
         self._tabsLayout.insertWidget(self._tabsLayout.count() - 1, button)
         self._tabs.append(button)
@@ -109,19 +111,70 @@ class TabWidget(QtWidgets.QWidget):
         self._stackWidget.addWidget(w)
 
         button.clicked.connect(partial(self.onTabClicked, button))  # noqa
-        self.updateState()
+        if self._currentTab is None:
+            self.setCurrentTab(self._tabs.index(button))
 
         return self._tabs.index(button)
 
+    def currentTab(self):
+        return self._currentTab if self._currentTab is not None else -1
+
+    def setCurrentTab(self, new_tab: Optional[int]):
+        # check if new tab is none and has alwaysOpen flag
+        if new_tab is None:
+            if self._alwaysOpen and self._tabs:
+                new_tab = 0
+
+        if self._currentTab != new_tab:
+            # uncheck all tabs except for new one
+            for idx, tab in enumerate(self._tabs):
+                tab.setChecked(idx == new_tab)
+
+            # check if new_tab still None
+            if new_tab is None:
+                self._stackWidget.setVisible(False)
+                if self._tabsRotation == OrientedButton.Orientation.Normal:
+                    self.setFixedHeight(22)
+                    self.setMaximumWidth(2147483647)
+                else:
+                    self.setFixedWidth(22)
+                    self.setMaximumHeight(2147483647)
+
+            else:
+                self._stackWidget.setVisible(True)
+                self._stackWidget.setCurrentIndex(new_tab)
+                self._stackWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+                self.setMaximumSize(2147483647, 2147483647)
+                self.setMinimumSize(50, 50)
+
+            self._currentTab = new_tab
+            self.currentTabChanged.emit(self.currentTab())
+
     def updateState(self):
         checked = next(filter(lambda x: x.isChecked(), self._tabs), None)
+
+        # check if there is active tab
         if checked is None:
+            # if there is always open flag - checks the first tab
             if self._alwaysOpen and self._tabs:
                 checked = self._tabs[0]
                 checked.setChecked(True)
+
+            # else hides stack widget and returns
             else:
                 self._stackWidget.setVisible(False)
+
+                if self._tabsRotation == OrientedButton.Orientation.Normal:
+                    self.setFixedHeight(22)
+                    self.setMaximumWidth(2147483647)
+                else:
+                    self.setFixedWidth(22)
+                    self.setMaximumHeight(2147483647)
                 return
+
+        self.setMaximumSize(2147483647, 2147483647)
+        self.setMinimumSize(50, 50)
 
         self._stackWidget.setVisible(True)
         index = self._tabs.index(checked)
@@ -130,15 +183,14 @@ class TabWidget(QtWidgets.QWidget):
 
     def onTabClicked(self, b: QtWidgets.QPushButton):
         try:
-            if self._alwaysOpen and not b.isChecked():
-                b.setChecked(True)
-                return
-
-            for btn in self._tabs:
-                if btn is not b:
-                    btn.setChecked(False)
-
-            self.updateState()
+            if b.isChecked():
+                idx = self._tabs.index(b)
+                self.setCurrentTab(idx)
+            else:
+                if self._alwaysOpen:
+                    b.setChecked(True)
+                else:
+                    self.setCurrentTab(None)
         except BaseException as e:
             print(e)
 
@@ -162,8 +214,6 @@ class TabWidget(QtWidgets.QWidget):
 
     def setAlwaysOpen(self, b: bool):
         self._alwaysOpen = b
-        if self._alwaysOpen:
-            self.updateState()
 
     def setTabIcon(self, index: int, icon: QtGui.QIcon):
         btn = self._tabs[index]
