@@ -11,6 +11,7 @@ from PyQt5 import QtWidgets, QtGui
 from core.api import KairyoApi
 from core.extension import KairyoExtension
 from core.styling import make_stylesheet, Style
+from core.styling.theme import DarkTheme
 from core.user_interface import UserInterface
 
 
@@ -92,6 +93,9 @@ def start_app():
         user_interface=UserInterface(win)
     )
     load_extensions(api)
+
+    theme = DarkTheme.from_xml("colors.xml")
+    win.setStyleSheet(theme.make_stylesheet())
 
     for ext in api.extensions:
         ext.on_setup_ui()

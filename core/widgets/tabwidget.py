@@ -4,35 +4,10 @@ from typing import List
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QSizePolicy
 
-from core.styling import make_stylesheet, Style
 from .orientedbutton import OrientedButton
 
 
 class TabWidget(QtWidgets.QWidget):
-    _STYLE_TAB = make_stylesheet([
-        Style("QPushButton", {
-            'color': '#cacaca',
-            'background-color': '#2e2e2e',
-            'border': 'none',
-            'border-radius': '0',
-            'padding': '4px 10px',
-        }),
-        Style("QPushButton:checked", {
-            'background-color': '#272727',
-            'border': 'none',
-        }),
-        Style("QPushButton:hover", {
-            'background-color': '#272727',
-            'border': 'none',
-        }),
-    ])
-
-    _STYLE_TAB_WINDOW = make_stylesheet([
-        Style("QStackedWidget", {
-            'border': '1px solid #212121'
-        })
-    ])
-
     _TAB_POSITION_PARAMS = {
         QtWidgets.QTabWidget.TabPosition.North: (
             QtWidgets.QBoxLayout.Direction.Down,
@@ -72,26 +47,10 @@ class TabWidget(QtWidgets.QWidget):
     }
 
     _TABS_WIDGET_STYLES = {
-        QtWidgets.QTabWidget.TabPosition.North: make_stylesheet([
-            Style('QWidget', {
-                'border-bottom': '1px solid #212121'
-            })
-        ]),
-        QtWidgets.QTabWidget.TabPosition.South: make_stylesheet([
-            Style('QWidget', {
-                'border-top': '1px solid #212121'
-            })
-        ]),
-        QtWidgets.QTabWidget.TabPosition.East: make_stylesheet([
-            Style('QWidget', {
-                'border-left': '1px solid #212121'
-            })
-        ]),
-        QtWidgets.QTabWidget.TabPosition.West: make_stylesheet([
-            Style('QWidget', {
-                'border-right': '1px solid #212121'
-            })
-        ]),
+        QtWidgets.QTabWidget.TabPosition.North: 'tabPaneNorth',
+        QtWidgets.QTabWidget.TabPosition.South: 'tabPaneSouth',
+        QtWidgets.QTabWidget.TabPosition.East: 'tabPaneEast',
+        QtWidgets.QTabWidget.TabPosition.West: 'tabPaneWest',
     }
 
     _TABS_WIDGET_CONTENT_MARGINS = {
@@ -144,7 +103,7 @@ class TabWidget(QtWidgets.QWidget):
         button.setText(name)
         button.setCheckable(True)
         button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        button.setStyleSheet(self._STYLE_TAB)
+        button.setObjectName("tabButton")
 
         self._tabs_layout.insertWidget(self._tabs_layout.count() - 1, button)
         self._tabs.append(button)
@@ -203,7 +162,7 @@ class TabWidget(QtWidgets.QWidget):
         for b in self._tabs:
             b.setOrientation(self._tabs_rotation)
 
-        self._tabs_widget.setStyleSheet(self._TABS_WIDGET_STYLES[a0])
+        self._tabs_widget.setObjectName(self._TABS_WIDGET_STYLES[a0])
         self._tabs_layout.setContentsMargins(*self._TABS_WIDGET_CONTENT_MARGINS[a0])
 
     # noinspection PyPep8Naming

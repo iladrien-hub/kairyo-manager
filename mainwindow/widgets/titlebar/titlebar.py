@@ -1,26 +1,11 @@
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtCore import QPoint, QRect
 
-from core.styling import make_stylesheet, Style
 from core.widgets.menubar import MenuBar
 from .buttons import TitleBarButtons
 
 
 class TitleBar(QtWidgets.QFrame):
-    _STYLE = make_stylesheet([Style('QFrame', {
-        'border-bottom': '1px solid #515151'
-    })])
-
-    _ICON_STYLE = make_stylesheet([Style('QLabel', {
-        'padding-left': '12px',
-        'padding-right': '12px'
-    })])
-
-    _LABEL_STYLE = make_stylesheet([Style('QLabel', {
-        'padding-left': '18px',
-        'font-size': '11px',
-        'color': '#7a7a7a'
-    })])
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -30,11 +15,11 @@ class TitleBar(QtWidgets.QFrame):
 
         self._menuBar = MenuBar()
         self._label = QtWidgets.QLabel()
+        self._label.setObjectName('appTitle')
         self.setLabel("aqua - 00013-3064614141.png")
 
         self._appIconLabel = QtWidgets.QLabel()
-
-        self._appIconLabel.setStyleSheet(self._ICON_STYLE)
+        self._appIconLabel.setObjectName("appIcon")
 
         self.setupUi()
 
@@ -43,9 +28,6 @@ class TitleBar(QtWidgets.QFrame):
         self._layout.setSpacing(0)
 
         self._layout.addWidget(self._appIconLabel)
-
-        self._label.setStyleSheet(self._LABEL_STYLE)
-
         self._layout.addWidget(self._menuBar)
         self._layout.addWidget(self._label)
 
@@ -54,8 +36,7 @@ class TitleBar(QtWidgets.QFrame):
 
         self.setLayout(self._layout)
         self.setFixedHeight(28)
-
-        self.setStyleSheet(self._STYLE)
+        self.setObjectName("titlebar")
 
     def mouseOverTitlebar(self, x, y):
         if self.childAt(QPoint(x, y)):

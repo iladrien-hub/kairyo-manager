@@ -1,23 +1,10 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QSize
 
-from core.styling import make_stylesheet, Style
 from core.styling.icon import load_icon
 
 
 class TitleBarButton(QtWidgets.QPushButton):
-    _STYLE = make_stylesheet([
-        Style('QPushButton', {
-            'background-color': 'transparent',
-            'border': 'none'
-        }),
-        Style('QPushButton:hover', {
-            'background-color': '#424242',
-        }),
-        Style('QPushButton:pressed', {
-            'background-color': '#686868',
-        }),
-    ])
 
     def __init__(self):
         super().__init__()
@@ -26,36 +13,18 @@ class TitleBarButton(QtWidgets.QPushButton):
         self.setFixedWidth(48)
         self.setIconSize(QSize(12, 12))
 
-        self.setStyleSheet(self._STYLE)
-
-
-class TitleBarCloseButton(TitleBarButton):
-    _STYLE = make_stylesheet([
-        Style('QPushButton', {
-            'background-color': 'transparent',
-            'border': 'none',
-        }),
-        Style('QPushButton:hover', {
-            'background-color': '#e81123',
-        }),
-        Style('QPushButton:pressed', {
-            'background-color': '#f1707a',
-        }),
-    ])
-
-    def __init__(self):
-        super().__init__()
-        self.setStyleSheet(self._STYLE)
-
 
 class TitleBarButtons(QtWidgets.QWidget):
 
     def __init__(self):
         super().__init__()
 
-        self._closeButton = TitleBarCloseButton()
+        self._closeButton = TitleBarButton()
+        self._closeButton.setObjectName('titleBarClose')
         self._resizeButton = TitleBarButton()
+        self._resizeButton.setObjectName('titleBarResize')
         self._minimizeButton = TitleBarButton()
+        self._minimizeButton.setObjectName('titleBarMinimize')
 
         self._closeIcon = load_icon(':/mainwindow/xmark.svg', '#b1b1b1')
         self._minimizeIcon = load_icon(':/mainwindow/window-minimize.svg', '#b1b1b1')
