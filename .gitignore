@@ -2,3 +2,4 @@ venv
 test
 [0-9]*.py
 .idea
+config.ini
