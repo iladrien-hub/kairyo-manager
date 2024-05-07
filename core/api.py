@@ -1,6 +1,10 @@
+import logging
+import os
 import typing
 
 from PyQt5.QtCore import QSettings
+
+from .project import Project
 
 if typing.TYPE_CHECKING:
     from .extension import KairyoExtension
@@ -26,6 +30,15 @@ class KairyoApi:
 
     def register_extension(self, ext: 'KairyoExtension'):
         self.__extensions.append(ext)
+
+    def open_project(self, fn: typing.Union[str, os.PathLike]):
+        self.__storage.project = Project(fn)
+        self.__settings.setValue('openProject/lastProject', fn)
+
+    def open_last_project(self):
+        fn = self.__settings.value('openProject/lastProject', None)
+        if fn and os.path.isdir(fn):
+            self.open_project(fn)
 
     @classmethod
     def instance(cls) -> 'KairyoApi':
