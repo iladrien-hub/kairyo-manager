@@ -69,3 +69,6 @@ class TitleBar(QtWidgets.QFrame):
 
     def setActive(self, b: bool):
         self._label.setEnabled(b)
+
+    def updateButtons(self):
+        self._buttons.updateMaximized()

@@ -7,6 +7,7 @@ from glob import glob
 from pathlib import Path
 
 from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtCore import QSize, QPoint
 
 from core.api import KairyoApi
 from core.extension import KairyoExtension
@@ -102,6 +103,10 @@ def start_app():
     api = KairyoApi(
         user_interface=UserInterface(win)
     )
+    size = api.settings.value('mainWindow/size', QSize(1024, 640), QSize)
+    pos = api.settings.value('mainWindow/position', None, QPoint)
+    maximized = api.settings.value('mainWindow/maximized', False, bool)
+
     load_extensions(api)
 
     theme = DarkTheme.from_xml("colors.xml")
@@ -111,9 +116,16 @@ def start_app():
         ext.on_setup_ui()
 
     win.setWindowIcon(QtGui.QIcon(":/mainwindow/Icon512.ico"))
-
     win.show()
-    win.resize(1024, 640)
+
+    if maximized:
+        win.showMaximized()
+    else:
+        win.resize(size)
+        if pos:
+            win.move(pos)
+
+    win.titlebar().updateButtons()
 
     app.focusChanged.connect(on_focus_changed)
 
