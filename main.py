@@ -79,6 +79,16 @@ def load_extensions(api: KairyoApi):
     logging.info(f"extensions loaded: {len(api.extensions)}")
 
 
+def on_focus_changed(old_widget: QtWidgets.QWidget, new_widget: QtWidgets.QWidget):
+    try:
+        if old_widget:
+            old_widget.window().titlebar().setActive(False)
+        if new_widget:
+            new_widget.window().titlebar().setActive(True)
+    except BaseException as e:
+        logging.error("", exc_info=e)
+
+
 def start_app():
     from mainwindow import MainWindow
     myappid = 'mycompany.myproduct.subproduct.version'  # arbitrary string
@@ -104,6 +114,8 @@ def start_app():
 
     win.show()
     win.resize(1024, 640)
+
+    app.focusChanged.connect(on_focus_changed)
 
     app.exec_()
 

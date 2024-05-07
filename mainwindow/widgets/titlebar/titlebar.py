@@ -66,3 +66,6 @@ class TitleBar(QtWidgets.QFrame):
                 return child
 
         return self._menuBar.addMenu(title)
+
+    def setActive(self, b: bool):
+        self._label.setEnabled(b)

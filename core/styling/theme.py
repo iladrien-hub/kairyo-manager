@@ -105,6 +105,9 @@ class DarkTheme(object):
                 'padding-left': '18px',
                 'font-size': '11px',
                 'color': self.text_100
+            }),
+            Style('QLabel:disabled#appTitle', {
+                'color': self.darker_hex(self.text_100, 2)
             })
         ]
 
@@ -171,8 +174,18 @@ class DarkTheme(object):
         return hsv[0], hsv[1], hsv[2] / f
 
     @classmethod
+    def darker_hex(cls, hex_value, f):
+        hsv = cls.hex2hsv(hex_value)
+        return cls.rgb2hex(cls.hsv2rgb(cls.darker(hsv, f)))
+
+    @classmethod
     def lighter(cls, hsv, f):
         return hsv[0], hsv[1], hsv[2] * f
+
+    @classmethod
+    def lighter_hex(cls, hex_value, f):
+        hsv = cls.hex2hsv(hex_value)
+        return cls.rgb2hex(cls.hsv2rgb(cls.lighter(hsv, f)))
 
     @classmethod
     def rgb2str(cls, rgb):
