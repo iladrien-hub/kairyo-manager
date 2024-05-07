@@ -94,7 +94,7 @@ def start_app():
     load_extensions(api)
 
     for ext in api.extensions:
-        ext.on_start()
+        ext.on_setup_ui()
 
     win.setWindowIcon(QtGui.QIcon(":/mainwindow/Icon512.ico"))
 

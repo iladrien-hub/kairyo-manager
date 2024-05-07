@@ -5,5 +5,5 @@ class KairyoExtension:
     def __init__(self, api: KairyoApi):
         self.api = api
 
-    def on_start(self):
+    def on_setup_ui(self):
         pass

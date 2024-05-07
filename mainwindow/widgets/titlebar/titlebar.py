@@ -44,10 +44,6 @@ class TitleBar(QtWidgets.QFrame):
 
         self._layout.addWidget(self._appIconLabel)
 
-        menu = QtWidgets.QMenu(self._menuBar)
-        menu.setTitle("File")
-        self._menuBar.addMenu(menu)
-
         self._label.setStyleSheet(self._LABEL_STYLE)
 
         self._layout.addWidget(self._menuBar)
@@ -78,3 +74,14 @@ class TitleBar(QtWidgets.QFrame):
 
     def setWindowIcon(self, icon: QtGui.QIcon):
         self._appIconLabel.setPixmap(icon.pixmap(18, 18))
+
+    def addMenu(self, title: str):
+        children = self._menuBar.children()
+        for child in children:
+            if not isinstance(child, QtWidgets.QMenu):
+                continue
+
+            if child.title() == title:
+                return child
+
+        return self._menuBar.addMenu(title)

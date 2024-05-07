@@ -14,3 +14,6 @@ class UserInterface:
         tab_idx = self._window.tabs.addTab(widget, name)
         if icon:
             self._window.tabs.setTabIcon(tab_idx, icon)
+
+    def add_menu(self, title: str):
+        return self._window.titlebar().addMenu(title)
