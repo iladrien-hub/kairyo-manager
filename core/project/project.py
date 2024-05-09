@@ -37,6 +37,9 @@ class Project:
     def get_image(self, name: str):
         return self._images[name]
 
+    def images(self):
+        return list(self._images.keys())
+
     @property
     def root_dir(self):
         return self._root_dir
