@@ -109,6 +109,7 @@ def start_app():
 
     load_extensions(api)
 
+    win.init()
     win.setStyleSheet(api.theme.make_stylesheet())
 
     for ext in api.extensions:
