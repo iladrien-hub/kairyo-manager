@@ -118,15 +118,15 @@ class DarkTheme(object):
                 'border-radius': '0px'
             }),
             Style('QScrollBar::handle:vertical', {
-                'background': self.hex2rgba(self.surface_400, 70),
+                'background': self.hex2rgba(self.surface_500, 140),
                 'width': '8px',
                 'border': 'none'
             }),
             Style('QScrollBar::handle:vertical:hover', {
-                'background': self.surface_400,
+                'background': self.surface_500,
             }),
             Style('QScrollBar::handle:vertical:pressed', {
-                'background': self.surface_400,
+                'background': self.surface_500,
             }),
             Style('QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical', {
                 'background': 'transparent',
@@ -136,11 +136,35 @@ class DarkTheme(object):
                 'background': 'transparent',
                 'border': 'none'
             }),
+            Style('QToolButton', {
+                'background': 'transparent',
+                'border': 'none',
+                'border-radius': '2px',
+                'padding': '4px',
+            }),
+            Style('QToolButton:hover', {
+                'background': self.hex2rgba(self.surface_500, 127),
+            }),
+            Style('QToolButton:pressed', {
+                'background': self.hex2rgba(self.surface_500, 175),
+            }),
+            Style('QToolTip', {
+                'color': self.text_200,
+                'background-color': self.surface_400,
+                'border': f'1px solid {self.surface_500}',
+            }),
             # region ProjectManager
             Style('QListWidget#projectImageList', {
                 'border': 'none',
                 'border-right': f'1px solid {self.surface_50}',
                 'background': self.surface_200,
+                'color': self.text_200
+            }),
+            Style('QFrame#imageListToolbar', {
+                'border': 'none',
+                'border-right': f'1px solid {self.surface_50}',
+                'border-bottom': f'1px solid {self.surface_50}',
+                'background': self.surface_300,
                 'color': self.text_200
             })
             # endregion
