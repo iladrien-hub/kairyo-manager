@@ -1,5 +1,7 @@
 import logging
 import queue
+import time
+from enum import Enum
 from typing import List, Optional
 
 from PyQt5 import QtWidgets, QtGui, QtCore
@@ -17,15 +19,42 @@ class ImageListItem(QtWidgets.QListWidgetItem):
         self.image = image
 
     def __lt__(self, other: 'ImageListItem'):
-        return self.text() < other.text()
+        match self.listWidget().sortOrder():
+            case ImageList.SortOrder.Name_AZ:
+                return self.text() < other.text()
+            case ImageList.SortOrder.Name_ZA:
+                return self.text() > other.text()
+            case ImageList.SortOrder.TimeCreated_Newer:
+                return self.image.meta.time_created > other.image.meta.time_created
+            case ImageList.SortOrder.TimeCreated_Older:
+                return self.image.meta.time_created < other.image.meta.time_created
 
 
 class ImageList(QtWidgets.QListWidget):
+    class SortOrder(Enum):
+        Name_AZ = 1
+        Name_ZA = 2
+        TimeCreated_Newer = 3
+        TimeCreated_Older = 4
+
+    sortOrderChanged = QtCore.pyqtSignal(SortOrder)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.verticalScrollBar().setSingleStep(20)
         self.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
+
+        self._sortOrder = self.SortOrder.Name_AZ
+
+    def setSortOrder(self, order: SortOrder):
+        if self._sortOrder != order:
+            self._sortOrder = order
+            self.sortItems()
+            self.sortOrderChanged.emit(order)
+
+    def sortOrder(self):
+        return self._sortOrder
 
     def updateGeometries(self) -> None:
         super().updateGeometries()
@@ -43,28 +72,116 @@ class ImageList(QtWidgets.QListWidget):
 
 
 class ImageLoader(QtCore.QObject):
+    __PULL_TIMEOUT = object()
 
-    def __init__(self):
+    def __init__(self, list_widget: ImageList):
         super().__init__()
+        self._list_widget = list_widget
         self._queue = queue.Queue()
+        self._items = []
 
-    def schedule(self, image: ProjectImage, list_widget: QtWidgets.QListWidget):
-        self._queue.put((image, list_widget))
+    def schedule(self, image: ProjectImage):
+        self._queue.put(image)
+
+    def pull(self):
+        try:
+            return self._queue.get(timeout=0.15)
+        except queue.Empty:
+            return self.__PULL_TIMEOUT
+
+    def flush(self):
+        if self._items:
+            for item in self._items:
+                self._list_widget.addItem(item)
+            self._list_widget.sortItems()
+            self._items.clear()
 
     def run(self):
         while True:
             try:
-                image, list_widget = self._queue.get()
+                image = self.pull()
+                if image is self.__PULL_TIMEOUT:
+                    self.flush()
+                    continue
 
                 pixmap = QtGui.QPixmap()
                 pixmap.loadFromData(image.read_version())
 
-                item = ImageListItem(QtGui.QIcon(pixmap), image.name, image)
-                list_widget.addItem(item)
-                list_widget.sortItems()
+                self._items.append(ImageListItem(QtGui.QIcon(pixmap), image.name, image))
+                if len(self._items) > 100:
+                    self.flush()
 
             except BaseException as e:
                 logging.error("", e)
+
+
+class ImageListToolbarButton(QtWidgets.QToolButton):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setIconSize(QtCore.QSize(16, 16))
+        self.setFixedSize(21, 21)
+
+
+class ScrollToSelectedButton(ImageListToolbarButton):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setIcon(load_icon(
+            ':/projectmanager/crosshairs-simple.svg',
+            KairyoApi.instance().theme.text_200
+        ))
+        self.setToolTip("Scroll to Selected File")
+
+
+class SetSortOrderButton(ImageListToolbarButton):
+    changed = QtCore.pyqtSignal(ImageList.SortOrder)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setIcon(load_icon(
+            ':/projectmanager/arrow-down-wide-short.svg',
+            KairyoApi.instance().theme.text_200
+        ))
+        self.setToolTip("Change Sort Order")
+
+        self._toolMenu = QtWidgets.QMenu(self)
+        self._actions = QtWidgets.QActionGroup(self)
+        self._order = ImageList.SortOrder.Name_AZ
+
+        options = (
+            ('Name (A-z)', ImageList.SortOrder.Name_AZ),
+            ('Name (z-A)', ImageList.SortOrder.Name_ZA),
+            ('Time Created (Newer)', ImageList.SortOrder.TimeCreated_Newer),
+            ('Time Created (Older)', ImageList.SortOrder.TimeCreated_Older),
+        )
+
+        for name, val in options:
+            action = self._actions.addAction(name)
+            action.setCheckable(True)
+            action.setData(val)
+
+            if val == self._order:
+                action.setChecked(True)
+
+        self._actions.setExclusive(True)
+        self._actions.setExclusionPolicy(QtWidgets.QActionGroup.ExclusionPolicy.Exclusive)
+
+        self._toolMenu.addActions(self._actions.actions())
+        self._actions.triggered.connect(self.on_actions_triggered)
+
+        self.setMenu(self._toolMenu)
+        self.setPopupMode(QtWidgets.QToolButton.InstantPopup)
+
+    def setOrder(self, val: ImageList.SortOrder):
+        if val != self._order:
+            self._order = val
+            for action in self._actions.actions():
+                action.setChecked(val == action.data())
+            self.changed.emit(self._order)
+
+    def on_actions_triggered(self):
+        self.setOrder(self._actions.checkedAction().data())
 
 
 class ImageListToolbar(QtWidgets.QFrame):
@@ -72,21 +189,24 @@ class ImageListToolbar(QtWidgets.QFrame):
         super().__init__(parent)
 
         self._listWidget = list_widget
-        self._scrollToCurrent = QtWidgets.QToolButton(self)
-        self._scrollToCurrent.setIcon(load_icon(
-            ':/projectmanager/crosshairs-simple.svg',
-            KairyoApi.instance().theme.text_200
-        ))
-        self._scrollToCurrent.setIconSize(QtCore.QSize(13, 13))
-        self._scrollToCurrent.setFixedSize(21, 21)
-        self._scrollToCurrent.setToolTip("Scroll to Selected File")
-        self._scrollToCurrent.clicked.connect(self.on_scrollToCurrent_clicked)
+        self._scrollToSelected = ScrollToSelectedButton(self)
+        self._scrollToSelected.clicked.connect(self.on_scrollToCurrent_clicked)
+
+        self._sortOrder = SetSortOrderButton(self)
+        self._sortOrder.changed.connect(self.on_sortOrder_changed)
+        self._listWidget.sortOrderChanged.connect(self._sortOrder.setOrder)
+
+        order = KairyoApi.instance().settings.value('projectmanager/imageListSortOrder', None, str)
+        if order in ImageList.SortOrder.__members__:
+            self._listWidget.setSortOrder(ImageList.SortOrder[order])
 
         layout = QtWidgets.QHBoxLayout()
         layout.addStretch()
-        layout.addWidget(self._scrollToCurrent)
+        layout.addWidget(self._sortOrder)
+        layout.addWidget(self._scrollToSelected)
 
         layout.setContentsMargins(2, 2, 2, 2)
+        layout.setSpacing(3)
 
         self.setLayout(layout)
         self.setFixedHeight(27)
@@ -103,6 +223,10 @@ class ImageListToolbar(QtWidgets.QFrame):
             if item.image is image:
                 self._listWidget.scrollToItem(item)
                 return
+
+    def on_sortOrder_changed(self, order: ImageList.SortOrder):
+        self._listWidget.setSortOrder(order)
+        KairyoApi.instance().settings.setValue('projectmanager/imageListSortOrder', order.name)
 
 
 class ProjectImageList(QtWidgets.QWidget):
@@ -130,7 +254,7 @@ class ProjectImageList(QtWidgets.QWidget):
         self.setLayout(layout)
 
         self.__loader_thread = QThread()
-        self.__loader = ImageLoader()
+        self.__loader = ImageLoader(self._list)
         self.__loader.moveToThread(self.__loader_thread)
 
         self.__loader_thread.started.connect(self.__loader.run)
@@ -144,7 +268,7 @@ class ProjectImageList(QtWidgets.QWidget):
 
             for im_name in project.images():
                 image = project.get_image(im_name)
-                self.__loader.schedule(image, self._list)
+                self.__loader.schedule(image)
 
             self._list.sortItems()
         except BaseException as e:

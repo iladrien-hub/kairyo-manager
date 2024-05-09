@@ -179,6 +179,7 @@ CssRule = TypedDict("CssRule", {
     'hyphens': str,
     'hypenate-character': str,
     'image-rendering': str,
+    'image': str,
     '@import': str,
     'inline-size': str,
     'inset': str,

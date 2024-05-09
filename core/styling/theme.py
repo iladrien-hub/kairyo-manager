@@ -148,6 +148,9 @@ class DarkTheme(object):
             Style('QToolButton:pressed', {
                 'background': self.hex2rgba(self.surface_500, 175),
             }),
+            Style('QToolButton::menu-indicator', {
+                'image': 'none',
+            }),
             Style('QToolTip', {
                 'color': self.text_200,
                 'background-color': self.surface_400,
