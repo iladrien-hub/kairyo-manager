@@ -50,3 +50,7 @@ class ProjectImage:
     @property
     def history(self):
         return self._vcs.history
+
+    @property
+    def name(self):
+        return self._name
