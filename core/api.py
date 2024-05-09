@@ -59,3 +59,7 @@ class KairyoApi:
     @property
     def theme(self):
         return self.__theme
+
+    @property
+    def storage(self):
+        return self.__storage
