@@ -1,9 +1,9 @@
+from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QLabel
 
 from core.extension import KairyoExtension
 from core.styling.icon import load_icon
 from extensions.projectmanager.widgets.projectamanagertab import ProjectManagerTab
-from mainwindow.widgets.windows import FramelessWindow
 
 
 class ProjectManagerExtension(KairyoExtension):
@@ -26,12 +26,15 @@ class ProjectManagerExtension(KairyoExtension):
         new_project = menu.addAction('New Project...')
         new_project.triggered.connect(self.on_create_project)
 
+        open_project = menu.addAction('Open...')
+        open_project.triggered.connect(self.on_open_project)
+        open_project.setIcon(load_icon(':projectmanager/folder-open.svg', self.api.theme.text_200))
+
     def on_create_project(self):
         dialog = self.api.user_interface.create_dialog('Create Project', QLabel('u sure?'))
-
         dialog.show()
 
-        # dialog = FramelessWindow(self.api.user_interface._window)
-        #
-        # dialog.addContentWidget(QLabel('Hello World!'))
-        # dialog.show()
+    def on_open_project(self):
+        path = QtWidgets.QFileDialog.getExistingDirectory(self.api.user_interface.window, 'Select Folder')
+        if path:
+            self.api.open_project(path)

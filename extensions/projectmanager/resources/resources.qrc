@@ -6,5 +6,6 @@
     <file>bookmark.svg</file>
     <file>memo-circle-info.svg</file>
     <file>code-branch.svg</file>
+    <file>folder-open.svg</file>
   </qresource>
 </RCC>
