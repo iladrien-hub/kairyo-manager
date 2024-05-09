@@ -52,5 +52,9 @@ class ProjectImage:
         return self._vcs.history
 
     @property
+    def head(self):
+        return self._vcs.current
+
+    @property
     def name(self):
         return self._name

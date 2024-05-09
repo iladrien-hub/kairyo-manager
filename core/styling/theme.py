@@ -169,7 +169,28 @@ class DarkTheme(object):
                 'border-bottom': f'1px solid {self.surface_50}',
                 'background': self.surface_300,
                 'color': self.text_200
-            })
+            }),
+            Style('QFrame#imageHistoryView', {
+                'border-left': f'1px solid {self.surface_50}',
+                'border-top': f'1px solid {self.surface_50}',
+            }),
+            Style('QListWidget#commitsList', {
+                'border': 'none',
+                'background': self.surface_200,
+                'color': self.text_200
+            }),
+            Style('SnapshotItemWidget > QLabel', {
+                'color': self.text_200,
+                'padding': '0px 4px',
+                'background': '#464a4d',
+                'font-family': 'Consolas',
+            }),
+            Style('SnapshotItemWidget > QLabel:hover', {
+                'background': self.lighter_hex('#464a4d', 1.3)
+            }),
+            Style('SnapshotItemWidget[selected="true"] > QLabel', {
+                'background': '#4b6eaf'
+            }),
             # endregion
         ]
 

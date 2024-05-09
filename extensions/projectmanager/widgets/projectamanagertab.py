@@ -7,6 +7,7 @@ from core.styling import make_stylesheet, Style
 from core.styling.icon import load_icon
 from core.widgets import TabWidget
 from core.widgets.splitter import Splitter
+from extensions.projectmanager.widgets.history import ImageHistoryWidget
 from extensions.projectmanager.widgets.imagelist import ProjectImageList
 
 
@@ -43,6 +44,9 @@ class ProjectManagerTab(QtWidgets.QWidget):
         self._imageList = ProjectImageList(self)
         self._imageList.setObjectName('projectImageList')
 
+        self._history = ImageHistoryWidget(self)
+        self._history.setObjectName('imageHistoryView')
+
         self.setupUi()
         QMetaObject.connectSlotsByName(self)
 
@@ -70,10 +74,11 @@ class ProjectManagerTab(QtWidgets.QWidget):
             load_icon(":/projectmanager/bookmark.svg", "#cacaca")
         )
 
-        q_label = QLabel("Image version history...")
-        q_label.setStyleSheet(self._BOTTOM_TAB_STYLE)
+        KairyoApi.instance().storage.imageChanged.connect(
+            lambda: self._history.setImage(KairyoApi.instance().storage.image)
+        )
         self._bottomTabs.setTabIcon(
-            self._bottomTabs.addTab(q_label, "History"),
+            self._bottomTabs.addTab(self._history, "History"),
             load_icon(":/projectmanager/code-branch.svg", "#cacaca")
         )
 
