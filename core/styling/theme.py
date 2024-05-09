@@ -11,6 +11,7 @@ class DarkTheme(object):
             self,
             *,
             accent_200: str,
+            surface_50: str,
             surface_100: str,
             surface_200: str,
             surface_300: str,
@@ -21,6 +22,7 @@ class DarkTheme(object):
             text_200: str,
     ):
         self.accent_200 = accent_200
+        self.surface_50 = surface_50
         self.surface_100 = surface_100
         self.surface_200 = surface_200
         self.surface_300 = surface_300
@@ -66,16 +68,16 @@ class DarkTheme(object):
                 'border': 'none',
             }),
             Style('QWidget#tabPaneNorth', {
-                'border-bottom': f'1px solid {self.surface_100}'
+                'border-bottom': f'1px solid {self.surface_50}'
             }),
             Style('QWidget#tabPaneSouth', {
-                'border-top': f'1px solid {self.surface_100}'
+                'border-top': f'1px solid {self.surface_50}'
             }),
             Style('QWidget#tabPaneEast', {
-                'border-left': f'1px solid {self.surface_100}'
+                'border-left': f'1px solid {self.surface_50}'
             }),
             Style('QWidget#tabPaneWest', {
-                'border-right': f'1px solid {self.surface_100}'
+                'border-right': f'1px solid {self.surface_50}'
             }),
             Style('QPushButton#titleBarMinimize, QPushButton#titleBarResize, QPushButton#titleBarClose', {
                 'background-color': 'transparent',
@@ -108,7 +110,40 @@ class DarkTheme(object):
             }),
             Style('QLabel:disabled#appTitle', {
                 'color': self.darker_hex(self.text_100, 2)
+            }),
+            Style('QScrollBar:vertical', {
+                'background': self.surface_200,
+                'width': '8px',
+                'border': 'none',
+                'border-radius': '0px'
+            }),
+            Style('QScrollBar::handle:vertical', {
+                'background': self.hex2rgba(self.surface_400, 70),
+                'width': '8px',
+                'border': 'none'
+            }),
+            Style('QScrollBar::handle:vertical:hover', {
+                'background': self.surface_400,
+            }),
+            Style('QScrollBar::handle:vertical:pressed', {
+                'background': self.surface_400,
+            }),
+            Style('QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical', {
+                'background': 'transparent',
+                'border': 'none'
+            }),
+            Style('QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical', {
+                'background': 'transparent',
+                'border': 'none'
+            }),
+            # region ProjectManager
+            Style('QListWidget#projectImageList', {
+                'border': 'none',
+                'border-right': f'1px solid {self.surface_50}',
+                'background': self.surface_200,
+                'color': self.text_200
             })
+            # endregion
         ]
 
     def make_stylesheet(self):
@@ -122,6 +157,7 @@ class DarkTheme(object):
         hsv = cls.hex2hsv(shade)
 
         res['surface_100'] = cls.rgb2hex(cls.hsv2rgb(cls.darker(hsv, 1.2)))
+        res['surface_50'] = cls.darker_hex(res['surface_100'], 1.1)
         res['surface_200'] = shade
         res['surface_300'] = cls.rgb2hex(cls.hsv2rgb(cls.lighter(hsv, 1.2)))
         res['surface_400'] = cls.rgb2hex(cls.hsv2rgb(cls.lighter(hsv, 1.7)))
@@ -194,3 +230,7 @@ class DarkTheme(object):
     @classmethod
     def rgb2hex(cls, rgb):
         return '#%02x%02x%02x' % rgb
+
+    @classmethod
+    def hex2rgba(cls, hex_value, alpha):
+        return "rgb({}, {}, {}, {})".format(*cls.hex2rgb(hex_value), alpha)
