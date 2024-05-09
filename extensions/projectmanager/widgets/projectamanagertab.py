@@ -2,10 +2,12 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt, QMetaObject, QSettings
 from PyQt5.QtWidgets import QLabel, QSizePolicy
 
+from core.api import KairyoApi
 from core.styling import make_stylesheet, Style
 from core.styling.icon import load_icon
 from core.widgets import TabWidget
 from core.widgets.splitter import Splitter
+from extensions.projectmanager.widgets.imagelist import ProjectImageList
 
 
 class ProjectManagerTab(QtWidgets.QWidget):
@@ -21,8 +23,8 @@ class ProjectManagerTab(QtWidgets.QWidget):
         }
     )])
 
-    def __init__(self, settings: QSettings):
-        super().__init__()
+    def __init__(self, parent, settings: QSettings):
+        super().__init__(parent)
 
         self._settings = settings
 
@@ -38,6 +40,9 @@ class ProjectManagerTab(QtWidgets.QWidget):
         self._bottomSplitter = Splitter(Qt.Vertical)
         self._bottomSplitter.setObjectName('bottomSplitter')
 
+        self._imageList = ProjectImageList(self)
+        self._imageList.setObjectName('projectImageList')
+
         self.setupUi()
         QMetaObject.connectSlotsByName(self)
 
@@ -45,10 +50,9 @@ class ProjectManagerTab(QtWidgets.QWidget):
         self._leftTabs.setTabPosition(QtWidgets.QTabWidget.TabPosition.West)
         self._bottomTabs.setTabPosition(QtWidgets.QTabWidget.TabPosition.South)
 
-        q_label = QLabel("Files list...")
-        q_label.setStyleSheet(self._LEFT_TAB_STYLE)
+        KairyoApi.instance().storage.projectChanged.connect(self._imageList.sync)
         self._leftTabs.setTabIcon(
-            self._leftTabs.addTab(q_label, "Files"),
+            self._leftTabs.addTab(self._imageList, "Files"),
             load_icon(":/projectmanager/folder.svg", "#cacaca")
         )
 
@@ -89,19 +93,12 @@ class ProjectManagerTab(QtWidgets.QWidget):
         bottom_layout.addItem(QtWidgets.QSpacerItem(21, 1, QSizePolicy.Fixed, QSizePolicy.Fixed))
         bottom_layout.addWidget(self._bottomTabs)
 
-        # layout = QtWidgets.QVBoxLayout()
         self._bottomSplitter.addWidget(self._topSplitter)
         w = QtWidgets.QWidget()
         w.setLayout(bottom_layout)
         self._bottomSplitter.addWidget(w)
         self._bottomSplitter.setChildrenCollapsible(False)
         self._bottomSplitter.setHandleWidth(0)
-
-        # layout.addWidget(self._topSplitter)
-        # layout.addLayout(bottom_layout)
-
-        # layout.setContentsMargins(0, 0, 0, 0)
-        # layout.setSpacing(0)
 
         layout = QtWidgets.QVBoxLayout()
         layout.setSpacing(0)

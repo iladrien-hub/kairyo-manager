@@ -11,7 +11,7 @@ class ProjectManagerExtension(KairyoExtension):
     def __init__(self, api):
         super().__init__(api)
 
-        self._main_tab = ProjectManagerTab(self.api.settings)
+        self._main_tab = ProjectManagerTab(api.user_interface.window, self.api.settings)
 
     def on_setup_ui(self):
         # Registering new tab
