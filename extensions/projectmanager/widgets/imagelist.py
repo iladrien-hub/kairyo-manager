@@ -10,6 +10,7 @@ from PyQt5.QtCore import QThread
 from core.api import KairyoApi
 from core.project import ProjectImage
 from core.styling.icon import load_icon
+from core.util.slot import safeSlot
 
 
 class ImageListItem(QtWidgets.QListWidgetItem):
@@ -241,6 +242,7 @@ class ProjectImageList(QtWidgets.QWidget):
         self._list.setResizeMode(QtWidgets.QListView.Adjust)
         self._list.setFlow(QtWidgets.QListView.LeftToRight)
         self._list.setSizeAdjustPolicy(QtWidgets.QListWidget.AdjustToContents)
+        self._list.setMovement(QtWidgets.QListView.Movement.Static)
         self._list.setSortingEnabled(True)
 
         self._bar = ImageListToolbar(self, self._list)
