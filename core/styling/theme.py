@@ -189,7 +189,18 @@ class DarkTheme(object):
                 'background': self.lighter_hex('#464a4d', 1.3)
             }),
             Style('SnapshotItemWidget[selected="true"] > QLabel', {
-                'background': '#4b6eaf'
+                'background': self.accent_200
+            }),
+            Style('PreviewGraphicsWidget', {
+                'border': 'none',
+                'border-left': f'1px solid {self.surface_50}',
+                'background': self.surface_100
+            }),
+            Style('HistoryInfoBox', {
+                'border': 'none',
+                'border-right': f'1px solid {self.surface_50}',
+                'background': self.surface_200,
+                'font-size': '14px'
             }),
             # endregion
         ]
