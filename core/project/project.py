@@ -45,9 +45,6 @@ class Project:
                 pil = Image.open(buffer)
                 params = parse_generation_parameters(pil.info['parameters'])
 
-                with open('params-norm.json', 'w', encoding="utf-8") as f:
-                    json.dump(params, f, ensure_ascii=False, indent=4)
-
         image = self.create_image(name)
         image.meta.time_created = time.time()
         image.params = params
