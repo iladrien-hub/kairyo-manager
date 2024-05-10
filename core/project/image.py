@@ -1,6 +1,8 @@
 import os.path
 from typing import TYPE_CHECKING
 
+import ujson
+
 from ..util.filedict import NamedFileDict, field
 from ..vcs import Repository
 
@@ -27,6 +29,7 @@ class ProjectImage:
 
         self._meta = ImageMeta(os.path.join(self._full_path, "meta.json"))
         self._vcs = Repository(self._full_path)
+        self._params = None
 
     # ---------------------- Public Methods ----------------------
 
@@ -61,3 +64,17 @@ class ProjectImage:
     @property
     def name(self):
         return self._name
+
+    @property
+    def params(self):
+        if self._params is None:
+            with open(os.path.join(self._full_path, 'params.json'), 'r', encoding='utf-8') as f:
+                self._params = ujson.load(f)
+
+        return self._params
+
+    @params.setter
+    def params(self, params):
+        self._params = params
+        with open(os.path.join(self._full_path, 'params.json'), 'w', encoding='utf-8') as f:
+            ujson.dump(self._params, f)
