@@ -56,12 +56,23 @@ def compile_ui():
 def load_extensions(api: KairyoApi):
     logging.info("loading extensions...")
 
+    order = {k: i for i, k in enumerate([
+        'projectmanager.py',
+        'progress.py',
+        'upscaler.py',
+    ])}
+    extensions = []
+
     for ext in os.listdir("./extensions"):
         fn = os.path.join("./extensions", ext, f"{ext}.py")
 
         if not os.path.isfile(fn):
             continue
+        extensions.append(fn)
 
+    extensions.sort(key=lambda x: order.get(os.path.basename(x), 65536))
+
+    for fn in extensions:
         with open(fn, encoding="utf-8") as f:
             code = compile(f.read(), fn, "exec")
 
