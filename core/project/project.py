@@ -1,9 +1,14 @@
+import io
+import json
 import os
 import time
 from typing import Union, Dict
 
+from PIL import Image
+
 from core.project.image import ProjectImage
 from core.util.filedict import NamedFileDict, field
+from core.util.params import parse_generation_parameters
 
 
 class ProjectMeta(NamedFileDict):
@@ -31,6 +36,24 @@ class Project:
 
         image = ProjectImage(self, name)
         image.meta.time_created = time.time()
+
+        return image
+
+    def add_image(self, name: str, data: bytes, params: dict = None):
+        if not params:
+            with io.BytesIO(data) as buffer:
+                pil = Image.open(buffer)
+                params = parse_generation_parameters(pil.info['parameters'])
+
+                with open('params-norm.json', 'w', encoding="utf-8") as f:
+                    json.dump(params, f, ensure_ascii=False, indent=4)
+
+        image = self.create_image(name)
+        image.meta.time_created = time.time()
+        image.params = params
+
+        image.update(content=data)
+        image.save_snapshot(description="initial")
 
         return image
 
