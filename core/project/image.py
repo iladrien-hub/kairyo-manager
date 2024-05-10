@@ -38,7 +38,10 @@ class ProjectImage:
         self._vcs.save_snapshot(description)
 
     def read_version(self, snapshot: str = None):
-        with self._vcs.open_file(os.path.join(self._full_path, "image.png"), snapshot) as f:
+        return self.read_file("image.png", snapshot)
+
+    def read_file(self, fn: str, snapshot: str = None):
+        with self._vcs.open_file(os.path.join(self._full_path, fn), snapshot) as f:
             return f.read()
 
     # ------------------------ Properties ------------------------
