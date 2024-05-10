@@ -27,22 +27,24 @@ class Thread(threading.Thread):
             ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
 
 
+class Callbacks(QtCore.QObject):
+    progress = QtCore.pyqtSignal(int)
+
+
 class BaseTask(abc.ABC):
 
     @abc.abstractmethod
-    def run(self, callbacks: 'Worker.Callbacks'):
+    def run(self, callbacks: Callbacks):
         pass
 
 
 class Worker:
-    class Callbacks(QtCore.QObject):
-        progress = QtCore.pyqtSignal(int)
 
     def __init__(self):
         self.__tasks = queue.Queue()
         self.__thread: Optional[Thread] = None
         self.__is_running = False
-        self.__callbacks = Worker.Callbacks()
+        self.__callbacks = Callbacks()
 
     def add_task(self, task: BaseTask):
         self.__tasks.put(task)
