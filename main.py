@@ -6,7 +6,7 @@ import sys
 from glob import glob
 from pathlib import Path
 
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import QSize, QPoint
 
 from core.api import KairyoApi
@@ -89,11 +89,29 @@ def on_focus_changed(old_widget: QtWidgets.QWidget, new_widget: QtWidgets.QWidge
         logging.error("", exc_info=e)
 
 
+def qtMessageHandler(type: QtCore.QtMsgType, context: QtCore.QMessageLogContext, msg: str):
+    if type == QtCore.QtCriticalMsg:  # noqa
+        level = logging.CRITICAL
+    elif type == QtCore.QtFatalMsg:  # noqa
+        level = logging.ERROR
+    elif type == QtCore.QtWarningMsg:  # noqa
+        level = logging.WARNING
+    elif type == QtCore.QtInfoMsg:  # noqa
+        level = logging.INFO
+    elif type == QtCore.QtDebugMsg:  # noqa
+        level = logging.DEBUG
+    else:
+        level = logging.DEBUG
+
+    logging.log(level, msg)
+
+
 def start_app():
     from mainwindow import MainWindow
     myappid = 'mycompany.myproduct.subproduct.version'  # arbitrary string
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
+    QtCore.qInstallMessageHandler(qtMessageHandler)
     app = QtWidgets.QApplication(sys.argv)
     # app.setStyleSheet(make_stylesheet([Style('QLabel', {'color': 'white'})]))
 
