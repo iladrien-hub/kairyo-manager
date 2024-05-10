@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="upscaler">
+    <file>sparkles.svg</file>
+  </qresource>
+</RCC>
