@@ -1,5 +1,6 @@
 import abc
 import asyncio
+import contextlib
 import inspect
 import logging
 import queue
@@ -38,6 +39,10 @@ class Worker:
     def stop(self):
         self.__is_running = False
 
+    def _poll(self):
+        with contextlib.suppress(queue.Empty):
+            return self.__tasks.get(timeout=1)
+
     def _run(self):
         logging.info("starting worker...")
 
@@ -45,7 +50,10 @@ class Worker:
         loop = asyncio.new_event_loop()
 
         while self.__is_running:
-            task: BaseTask = self.__tasks.get()
+            task: BaseTask = self._poll()
+            if task is None:
+                continue
+
             try:
                 if inspect.iscoroutinefunction(task.run):
                     loop.run_until_complete(task.run(self.__callbacks))
