@@ -42,6 +42,12 @@ class DarkTheme(object):
             }),
             Style('QMenu::item', {
                 'color': self.text_200,
+                'padding': '4px 8px',
+                'min-width': '269px',
+                'height': '13px'
+            }),
+            Style('QMenu::icon', {
+                'padding-left': '12px'
             }),
             Style('QMenu::item:selected', {
                 'background-color': self.accent_200,
