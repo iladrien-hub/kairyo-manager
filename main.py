@@ -148,7 +148,8 @@ def start_app():
     app.focusChanged.connect(on_focus_changed)
     api.open_last_project()
 
-    app.exec_()
+    with api.worker:
+        app.exec_()
 
 
 if __name__ == '__main__':

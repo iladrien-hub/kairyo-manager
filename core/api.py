@@ -5,6 +5,7 @@ import typing
 from PyQt5.QtCore import QSettings
 
 from .project import Project
+from .worker import Worker
 
 if typing.TYPE_CHECKING:
     from .extension import KairyoExtension
@@ -27,6 +28,7 @@ class KairyoApi:
         self.__storage: 'KairyoStorage' = KairyoStorage()
         self.__settings: QSettings = QSettings('config.ini', QSettings.IniFormat)
         self.__theme: 'DarkTheme' = theme
+        self.__worker: Worker = Worker()
 
     def register_extension(self, ext: 'KairyoExtension'):
         self.__extensions.append(ext)
@@ -63,3 +65,7 @@ class KairyoApi:
     @property
     def storage(self):
         return self.__storage
+
+    @property
+    def worker(self):
+        return self.__worker
