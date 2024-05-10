@@ -1,12 +1,30 @@
 import abc
 import asyncio
 import contextlib
+import ctypes
 import inspect
 import logging
 import queue
 import threading
+from typing import Optional
 
 from PyQt5 import QtCore
+
+
+class Thread(threading.Thread):
+
+    def get_id(self):
+        if hasattr(self, '_thread_id'):
+            return self._thread_id
+        for _id, thread in threading._active.items():  # noqa
+            if thread is self:
+                return _id
+
+    def terminate(self):
+        thread_id = self.get_id()
+        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, ctypes.py_object(SystemExit))
+        if res > 1:
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
 
 
 class BaseTask(abc.ABC):
@@ -22,7 +40,7 @@ class Worker:
 
     def __init__(self):
         self.__tasks = queue.Queue()
-        self.__thread = None
+        self.__thread: Optional[Thread] = None
         self.__is_running = False
         self.__callbacks = Worker.Callbacks()
 
@@ -33,11 +51,14 @@ class Worker:
         if self.__thread is not None:
             return
 
-        self.__thread = threading.Thread(target=self._run)
+        self.__thread = Thread(target=self._run)
         self.__thread.start()
 
     def stop(self):
         self.__is_running = False
+        self.__thread.join(5)
+        if self.__thread.is_alive():
+            self.__thread.terminate()
 
     def _poll(self):
         with contextlib.suppress(queue.Empty):
