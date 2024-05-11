@@ -60,6 +60,11 @@ class Project:
     def images(self):
         return list(self._images.keys())
 
+    def next(self, **tags):
+        ret = next(filter(lambda x: all(x[1].has_tag(t) == v for t, v in tags.items()), self._images.items()), None)
+        if ret:
+            return ret[0]
+
     @property
     def root_dir(self):
         return self._root_dir
