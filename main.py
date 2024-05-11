@@ -1,4 +1,5 @@
 import ctypes
+import importlib
 import inspect
 import logging
 import os
@@ -69,6 +70,14 @@ def load_extensions(api: KairyoApi):
         if not os.path.isfile(fn):
             continue
         extensions.append(fn)
+
+        res_fn = os.path.join('./extensions', ext, 'generated/resources_rc.py')
+        if os.path.isfile(res_fn):
+            module = os.path.normpath(res_fn)
+            module = os.path.splitext(module)[0]
+            module = module.replace("\\", '.')
+
+            importlib.import_module(module)
 
     extensions.sort(key=lambda x: order.get(os.path.basename(x), 65536))
 
