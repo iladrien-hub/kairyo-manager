@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 class ImageMeta(NamedFileDict):
     time_created: float = field()
     time_upscaled: float = field()
+    tags: list = field(default_factory=list)
 
 
 class ProjectImage:
@@ -46,6 +47,19 @@ class ProjectImage:
     def read_file(self, fn: str, snapshot: str = None):
         with self._vcs.open_file(os.path.join(self._full_path, fn), snapshot) as f:
             return f.read()
+
+    def add_tag(self, tag: str):
+        if not self.has_tag(tag):
+            with self._meta:
+                self._meta.tags.append(tag)
+
+    def remove_tag(self, tag: str):
+        if self.has_tag(tag):
+            with self._meta:
+                self._meta.tags.remove(tag)
+
+    def has_tag(self, tag: str):
+        return tag in self._meta.tags
 
     # ------------------------ Properties ------------------------
 
