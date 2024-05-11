@@ -145,7 +145,9 @@ class ImageHistoryWidget(QtWidgets.QFrame):
                 self._previewWidget.fitInView(self._previewPixmapItem, Qt.KeepAspectRatio)
 
                 meta = self._image.read_file("meta.json", snapshot_hash)
-                meta = json.dumps(json.loads(meta), ensure_ascii=False, indent=4)
+                meta = json.loads(meta)
+                meta = dict(sorted(meta.items(), key=lambda x: x[0]))
+                meta = json.dumps(meta, ensure_ascii=False, indent=4)
                 meta = highlight(meta, lexers.JsonLexer(), self._infoFormatter)
 
                 self._infoBox.setText(f"<style>{self._infoBoxCss}</style>{meta}")
