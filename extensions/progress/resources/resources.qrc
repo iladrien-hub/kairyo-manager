@@ -1,0 +1,10 @@
+<RCC>
+  <qresource prefix="progress">
+    <file>rectangle-vertical-history.svg</file>
+    <file>clock.svg</file>
+    <file>ban.svg</file>
+    <file>circle-exclamation.svg</file>
+    <file>play.svg</file>
+    <file>badge-check.svg</file>
+  </qresource>
+</RCC>
