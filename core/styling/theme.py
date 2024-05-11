@@ -11,6 +11,8 @@ class DarkTheme(object):
             self,
             *,
             accent_200: str,
+            danger_200: str,
+            success_200: str,
             surface_50: str,
             surface_100: str,
             surface_200: str,
@@ -22,6 +24,8 @@ class DarkTheme(object):
             text_200: str,
     ):
         self.accent_200 = accent_200
+        self.danger_200 = danger_200
+        self.success_200 = success_200
         self.surface_50 = surface_50
         self.surface_100 = surface_100
         self.surface_200 = surface_200
@@ -162,6 +166,14 @@ class DarkTheme(object):
                 'background-color': self.surface_400,
                 'border': f'1px solid {self.surface_500}',
             }),
+            Style('QProgressBar ', {
+                'border': 'none',
+                'max-height': '4px',
+                'background-color': self.surface_200
+            }),
+            Style('QProgressBar::chunk', {
+                'background-color': self.accent_200
+            }),
             # region ProjectManager
             Style('QListWidget#projectImageList', {
                 'border': 'none',
@@ -209,13 +221,29 @@ class DarkTheme(object):
                 'font-size': '14px'
             }),
             # endregion
+            # region: progress-ext
+            Style('QueueItemWidget', {
+                'border': 'none',
+                'background': self.surface_300,
+            }),
+            Style('QueueItemWidget > QLabel#queueItemName', {
+                'color': text_200,
+            }),
+            Style('QueueItemWidget > QLabel#queueItemDescription', {
+                'color': text_100,
+            }),
+            Style('QueueListWidget > QListWidget', {
+                'border': 'none',
+                'background': self.surface_200
+            }),
+            # endregion
         ]
 
     def make_stylesheet(self):
         return make_stylesheet(self.stylesheet, do_ident_closing_brace=False)
 
     @classmethod
-    def from_palette(cls, shade: str, text: str, accent: str):
+    def from_palette(cls, shade: str, text: str, accent: str, danger: str, success: str):
         res = {}
 
         # surfaces
@@ -236,6 +264,12 @@ class DarkTheme(object):
 
         # accent
         res['accent_200'] = accent
+
+        # danger
+        res['danger_200'] = danger
+
+        # success
+        res['success_200'] = success
 
         return cls(**res)
 
