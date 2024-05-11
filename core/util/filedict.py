@@ -78,6 +78,12 @@ class FileDict:
     def path(self):
         return self._fn
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.__dump()
+
 
 class NamedFileDictMeta(type):
     def __new__(mcs, name, bases, attrs):
