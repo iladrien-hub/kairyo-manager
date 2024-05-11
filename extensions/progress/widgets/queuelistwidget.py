@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QListWidgetItem
 
 from core.api import KairyoApi
 from core.styling.icon import load_icon
+from core.widgets.toolbar import ToolBar
 from core.worker import TaskStatus
 
 
@@ -65,7 +66,7 @@ class QueueItemWidget(QtWidgets.QFrame):
         self._iconLabel.setPixmap(status.icon.pixmap(16, 16))
 
 
-class QueueListWidget(QtWidgets.QWidget):
+class QueueListWidget(QtWidgets.QFrame):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -109,16 +110,27 @@ class QueueListWidget(QtWidgets.QWidget):
         ])}
 
         self._list = QtWidgets.QListWidget()
+        self._toolBar = ToolBar(self)
+
+        self._cancelButton = self._toolBar.addButton(
+            load_icon(
+                ':/progress/ban.svg',
+                KairyoApi.instance().theme.text_200
+            ),
+            'Cancel Current Task'
+        )
 
         layout = QtWidgets.QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
+        layout.addWidget(self._toolBar)
         layout.addWidget(self._list)
 
         self.setLayout(layout)
 
         self._api.worker.statusChanged.connect(self.on_worker_statusChanged)
+        self._cancelButton.clicked.connect(self.on_cancelButton_clicked)
         self.syncList()
 
     def syncList(self):
@@ -142,3 +154,6 @@ class QueueListWidget(QtWidgets.QWidget):
 
     def on_worker_statusChanged(self):
         self.syncList()
+
+    def on_cancelButton_clicked(self):
+        self._api.worker.skip()
