@@ -2,4 +2,6 @@
     <shade>#272727</shade>
     <text>#cacaca</text>
     <accent>#4b6eaf</accent>
+    <danger>#f3505c</danger>
+    <success>#51f66f</success>
 </colors>
