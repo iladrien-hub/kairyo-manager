@@ -222,6 +222,10 @@ class DarkTheme(object):
             }),
             # endregion
             # region: progress-ext
+            Style('QueueListWidget', {
+                'border': 'none',
+                'border-left': f'1px solid {self.surface_50}',
+            }),
             Style('QueueItemWidget', {
                 'border': 'none',
                 'background': self.surface_300,
@@ -235,6 +239,10 @@ class DarkTheme(object):
             Style('QueueListWidget > QListWidget', {
                 'border': 'none',
                 'background': self.surface_200
+            }),
+            Style('QueueListWidget > ToolBar', {
+                'border': 'none',
+                'border-bottom': f'1px solid {self.surface_50}',
             }),
             # endregion
         ]
