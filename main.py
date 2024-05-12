@@ -58,9 +58,9 @@ def load_extensions(api: KairyoApi):
     logging.info("loading extensions...")
 
     order = {k: i for i, k in enumerate([
-        'projectmanager.py',
-        'progress.py',
-        'upscaler.py',
+        'projectmanager',
+        'progress',
+        'upscaler',
     ])}
     extensions = []
 
@@ -69,7 +69,7 @@ def load_extensions(api: KairyoApi):
 
         if not os.path.isfile(fn):
             continue
-        extensions.append(fn)
+        extensions.append((fn, ext))
 
         res_fn = os.path.join('./extensions', ext, 'generated/resources_rc.py')
         if os.path.isfile(res_fn):
@@ -79,13 +79,13 @@ def load_extensions(api: KairyoApi):
 
             importlib.import_module(module)
 
-    extensions.sort(key=lambda x: order.get(os.path.basename(x), 65536))
+    extensions.sort(key=lambda x: order.get(os.path.basename(x[1]), 65536))
 
-    for fn in extensions:
+    for fn, ext in extensions:
         with open(fn, encoding="utf-8") as f:
             code = compile(f.read(), fn, "exec")
 
-            tmp = {}
+            tmp = {'__name__': f'extensions.{ext}.{ext}'}
             exec(code, tmp)
 
             for item in tmp.values():
