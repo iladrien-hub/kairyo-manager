@@ -7,8 +7,8 @@ from core.styling import make_stylesheet, Style
 from core.styling.icon import load_icon
 from core.widgets import TabWidget
 from core.widgets.splitter import Splitter
-from extensions.projectmanager.widgets.history import ImageHistoryWidget
-from extensions.projectmanager.widgets.imagelist import ProjectImageList
+from .history import ImageHistoryWidget
+from .imagelist import ProjectImageList
 
 
 class ProjectManagerTab(QtWidgets.QWidget):

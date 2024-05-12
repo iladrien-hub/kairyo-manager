@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QLabel
 
 from core.extension import KairyoExtension
 from core.styling.icon import load_icon
-from extensions.projectmanager.widgets.projectamanagertab import ProjectManagerTab
+from .widgets.projectamanagertab import ProjectManagerTab
 
 
 class ProjectManagerExtension(KairyoExtension):
