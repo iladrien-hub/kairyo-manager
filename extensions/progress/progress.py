@@ -1,6 +1,6 @@
 from core.extension import KairyoExtension
 from core.styling.icon import load_icon
-from widgets.queuetabwidget import QueueTabWidget
+from .widgets.queuetabwidget import QueueTabWidget
 
 
 class ProgressExtension(KairyoExtension):
