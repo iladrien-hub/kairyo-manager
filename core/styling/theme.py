@@ -62,18 +62,18 @@ class DarkTheme(object):
             Style('QMenuBar::item:selected, QMenuBar::item:pressed', {
                 'background-color': self.accent_200
             }),
-            Style("QPushButton#tabButton", {
+            Style("TabButton", {
                 'color': self.text_200,
                 'background-color': self.surface_300,
                 'border': 'none',
                 'border-radius': '0',
                 'padding': '4px 10px',
             }),
-            Style("QPushButton:checked#tabButton", {
+            Style("TabButton:checked", {
                 'background-color': self.surface_200,
                 'border': 'none',
             }),
-            Style("QPushButton:hover#tabButton", {
+            Style("TabButton:hover", {
                 'background-color': self.surface_200,
                 'border': 'none',
             }),
@@ -173,6 +173,98 @@ class DarkTheme(object):
             }),
             Style('QProgressBar::chunk', {
                 'background-color': self.accent_200
+            }),
+            Style('QLineEdit', {
+                'background-color': self.surface_200,
+                'border': f'1px solid {self.surface_50}',
+                'padding': '4px'
+            }),
+            Style('QLineEdit, QTextEdit', {
+                'background-color': self.surface_200,
+                'border': f'1px solid {self.surface_50}',
+                'padding': '4px',
+                'color': self.text_200
+            }),
+            Style('QLineEdit:focus, QTextEdit:focus, QComboBox:focus, QComboBox:on', {
+                'border': f'1px solid {self.accent_200}',
+            }),
+            Style('QSlider::groove', {
+                'border': 'none',
+                'background': self.surface_100
+            }),
+            Style('QSlider::groove:horizontal', {
+                'height': '4px'
+            }),
+            Style('QSlider::groove:vertical', {
+                'width': '4px'
+            }),
+            Style('QSlider::handle', {
+                'background': self.accent_200,
+                'height': '14px',
+                'width': '14px',
+                'border': f'2px solid {self.surface_300}',
+                'border-radius': '9px'
+            }),
+            Style('QSlider::handle:horizontal', {
+                'margin': '-7px 0px'
+            }),
+            Style('QSlider::handle:vertical', {
+                'margin': '0px -7px'
+            }),
+            Style('FancySlider > QLabel', {
+                'color': self.text_200
+            }),
+            Style('QComboBox', {
+                'color': self.text_200,
+                'padding': '4px 6px',
+                'border': f'1px solid {self.surface_50}',
+                'background': self.surface_200,
+            }),
+            Style('QComboBox QAbstractItemView', {
+                'color': self.text_200,
+                'background': self.surface_200,
+                'border': f'1px solid {self.surface_50}',
+                'outline': 'none'
+            }),
+            Style('QComboBox QAbstractItemView::item', {
+                'padding': '4px',
+                'border': 'none'
+            }),
+            Style('QComboBox QAbstractItemView::item:hover', {
+                'padding': '4px',
+                'background-color': self.surface_400,
+            }),
+            Style('QComboBox::item', {
+                'color': self.text_200,
+            }),
+            Style('QComboBox::drop-down', {
+                'subcontrol-origin': 'padding',
+                'subcontrol-position': 'center right',
+                'width': '14px',
+                'height': '14px',
+                'background': 'transparent'
+            }),
+            Style('QComboBox::down-arrow', {
+                'image': 'url(:/mainwindow/sort-down.svg)',
+                'margin-right': '6px',
+                'width': '8px',
+                'height': '8px',
+            }),
+            Style('QCheckBox', {
+                'color': self.text_200
+            }),
+            Style('QCheckBox::indicator', {
+                'border': f'1px solid {self.surface_50}',
+                'border-radius': '2px',
+                'width': '12px',
+                'height': '12px',
+                'padding': '2px'
+            }),
+            Style('QCheckBox::indicator:focus', {
+                'border': f'1px solid {self.accent_200}',
+            }),
+            Style('QCheckBox::indicator:checked', {
+                'image': 'url(:/mainwindow/check.svg)',
             }),
             # region ProjectManager
             Style('QListWidget#projectImageList', {

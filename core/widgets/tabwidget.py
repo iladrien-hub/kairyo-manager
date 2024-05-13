@@ -7,6 +7,10 @@ from PyQt5.QtWidgets import QSizePolicy
 from .orientedbutton import OrientedButton
 
 
+class TabButton(OrientedButton):
+    pass
+
+
 class TabWidget(QtWidgets.QWidget):
     currentTabChanged = QtCore.pyqtSignal(int)
 
@@ -65,7 +69,7 @@ class TabWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
-        self._tabs: List[OrientedButton] = []
+        self._tabs: List[TabButton] = []
         self._tabsRotation: OrientedButton.Orientation = OrientedButton.Orientation.Normal
         self._currentTab: Optional[int] = None
 
@@ -98,7 +102,7 @@ class TabWidget(QtWidgets.QWidget):
         self.setLayout(self._layout)
 
     def addTab(self, w: QtWidgets.QWidget, name: str):
-        button = OrientedButton(name, self, orientation=self._tabsRotation)
+        button = TabButton(name, self, orientation=self._tabsRotation)
         button.setText(name)
         button.setCheckable(True)
         button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
