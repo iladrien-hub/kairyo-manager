@@ -37,6 +37,7 @@ class FancySlider(QtWidgets.QFrame):
 
         self._slider.valueChanged.connect(self.on_slider_valueChanged)
         self._lineEdit.textEdited.connect(self.on_lineEdit_textEdited)
+        self._lineEdit.setText(str(self.value()))
 
     def setRange(self, bottom: float, top: float, decimals: int):
         self._decimals = decimals
@@ -44,6 +45,7 @@ class FancySlider(QtWidgets.QFrame):
 
         self._lineEdit.setValidator(QtGui.QDoubleValidator(bottom, top, decimals))
         self._slider.setRange(int(bottom * self._decimalsMultiplier), int(top * self._decimalsMultiplier))
+        self._lineEdit.setText(str(self.value()))
 
     def value(self):
         return self._slider.value() / self._decimalsMultiplier

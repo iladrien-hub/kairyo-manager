@@ -5,7 +5,8 @@ from PyQt5.QtCore import QEvent
 
 from core.api import KairyoApi
 from core.widgets import TabWidget
-from mainwindow.widgets.windows import FramelessWindow
+from .settings.path import PathSettingsWidget
+from .widgets.windows import FramelessWindow
 
 
 class MainWindow(FramelessWindow):
@@ -20,9 +21,12 @@ class MainWindow(FramelessWindow):
         self.addContentWidget(self.tabs)
 
     def init(self):
-        storage = KairyoApi.instance().storage
+        api = KairyoApi.instance()
+        storage = api.storage
         storage.projectChanged.connect(self.on_storage_projectChanged)
         storage.imageChanged.connect(self.on_storage_imageChanged)
+
+        api.user_interface.register_settings('Path', PathSettingsWidget)
 
     def updateTitle(self):
         title = []

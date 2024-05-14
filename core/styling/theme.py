@@ -38,7 +38,38 @@ class DarkTheme(object):
 
         self.stylesheet = [
             Style('*', {
-                'background-color': self.surface_300
+                'background-color': self.surface_300,
+                'outline': 'none'
+            }),
+            Style('QLabel', {
+                'color': self.text_200,
+            }),
+            Style('LabeledDivider > QFrame[frameShape="4"]', {
+                'color': self.text_100,
+            }),
+            Style('QPushButton', {
+                'background': f'qlineargradient(x1:0, y1:0, x2:0, y2:1, '
+                              f'stop:0 {self.lighter_hex(self.surface_200, 2.5)}, '
+                              f'stop:1 {self.surface_500})',
+                'border': f'1px solid {self.surface_200}',
+                'border-radius': '2px',
+                'padding': '4px 15px',
+                'color': self.text_200,
+                'font-size': '11px',
+            }),
+            Style('QPushButton[accent="true"]', {
+                'background': f'qlineargradient(x1:0, y1:0, x2:0, y2:1, '
+                              f'stop:0 #3486e5, '
+                              f'stop:1 #235b9b)',
+                'font-weight': 'bold'
+            }),
+            Style('QPushButton:focus', {
+                'border': f'1px solid {self.accent_200}',
+            }),
+            Style('QPushButton:disabled', {
+                'border': f'1px solid {self.darker_hex(self.text_100, 1.7)}',
+                'background': 'transparent',
+                'color': self.darker_hex(self.text_100, 1.7)
             }),
             Style('QMenu', {
                 'background-color': self.surface_300,
@@ -266,7 +297,44 @@ class DarkTheme(object):
             Style('QCheckBox::indicator:checked', {
                 'image': 'url(:/mainwindow/check.svg)',
             }),
-            # region ProjectManager
+            Style('QTreeView', {
+                'border': 'none',
+                'color': self.text_200,
+                'font-weight': 'bold',
+            }),
+            Style('QTreeView::item', {
+                'padding': '4px 0px',
+                'color': self.text_200,
+            }),
+            Style('QTreeView::item:hover', {
+                'background': 'transparent',
+            }),
+            Style('QTreeView::item:selected', {
+                'background': self.surface_400,
+            }),
+            Style('QTreeView::branch:selected', {
+                'background': self.surface_400,
+            }),
+            Style(
+                'QTreeView::branch:has-children:!has-siblings:closed, '
+                'QTreeView::branch:closed:has-children:has-siblings', {
+                    'padding': '7px',
+                    'border-image': 'none',
+                    'image': 'url(:/mainwindow/chevron-right.svg)',
+                }
+            ),
+            Style(
+                'QTreeView::branch:open:has-children:!has-siblings, '
+                'QTreeView::branch:open:has-children:has-siblings ', {
+                    'padding': '5px',
+                    'border-image': 'none',
+                    'image': 'url(:/mainwindow/chevron-down.svg)',
+                }
+            ),
+            Style('FileInput', {
+                'qproperty-iconColor': self.text_100,
+            }),
+            # region: ProjectManager
             Style('QListWidget#projectImageList', {
                 'border': 'none',
                 'border-right': f'1px solid {self.surface_50}',
@@ -335,6 +403,16 @@ class DarkTheme(object):
             Style('QueueListWidget > ToolBar', {
                 'border': 'none',
                 'border-bottom': f'1px solid {self.surface_50}',
+            }),
+            # endregion
+            # region: Settings
+            Style('SettingsWidget > QLabel', {
+                'color': self.text_200,
+                'font-weight': 'bold',
+                # 'background': 'red'
+            }),
+            Style('SettingsFooter', {
+                'border-top': f'1px solid {self.surface_50}',
             }),
             # endregion
         ]

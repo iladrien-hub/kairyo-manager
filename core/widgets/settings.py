@@ -1,7 +1,9 @@
 from typing import Optional, Any
 
 from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtWidgets import QSizePolicy
 
+from .fileinput import FileInput
 from .slider import FancySlider
 
 
@@ -168,15 +170,7 @@ class OptionsSetting(QtWidgets.QComboBox, Setting):
         return None
 
 
-class SettingsWidget(QtWidgets.QFrame):
+class FileSetting(FileInput, TextSetting):
 
-    def __init__(self):
-        super().__init__()
-
-        self._settings = []
-        self._layout = QtWidgets.QVBoxLayout()
-
-    def setWidget(self, w: Setting):
-        self._settings.append(w)
-
-        self._layout.addWidget(w)
+    def defaultFactory(self):
+        return ""
