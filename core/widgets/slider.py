@@ -12,6 +12,8 @@ class FancySlider(QtWidgets.QFrame):
 
         self._label = QtWidgets.QLabel(self)
         self._lineEdit = QtWidgets.QLineEdit(self)
+        self._lineEdit.setMaximumWidth(60)
+
         self._slider = QtWidgets.QSlider()
         self._slider.setOrientation(Qt.Horizontal)
 
@@ -37,7 +39,7 @@ class FancySlider(QtWidgets.QFrame):
 
         self._slider.valueChanged.connect(self.on_slider_valueChanged)
         self._lineEdit.textEdited.connect(self.on_lineEdit_textEdited)
-        self._lineEdit.setText(str(self.value()))
+        self.updateLineEdit()
 
     def setRange(self, bottom: float, top: float, decimals: int):
         self._decimals = decimals
@@ -45,7 +47,7 @@ class FancySlider(QtWidgets.QFrame):
 
         self._lineEdit.setValidator(QtGui.QDoubleValidator(bottom, top, decimals))
         self._slider.setRange(int(bottom * self._decimalsMultiplier), int(top * self._decimalsMultiplier))
-        self._lineEdit.setText(str(self.value()))
+        self.updateLineEdit()
 
     def value(self):
         return self._slider.value() / self._decimalsMultiplier
@@ -56,11 +58,18 @@ class FancySlider(QtWidgets.QFrame):
     def setLabel(self, t: str):
         self._label.setText(t)
 
+    def updateLineEdit(self):
+        value = self.value()
+        if value == (int_val := int(value)):
+            self._lineEdit.setText(str(int_val))
+        else:
+            self._lineEdit.setText(str(value))
+
     def on_slider_valueChanged(self):
         if self._lineEdit.hasFocus():
             return
         value = self.value()
-        self._lineEdit.setText(str(value))
+        self.updateLineEdit()
         self.valueChanged.emit(value)
 
     def on_lineEdit_textEdited(self):
