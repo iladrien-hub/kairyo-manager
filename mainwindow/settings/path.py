@@ -30,7 +30,7 @@ class PathSettingsWidget(QtWidgets.QFrame):
         form.setContentsMargins(16, 0, 0, 0)
         form.setSpacing(16)
 
-        form.addRow("Path to Photoshop executable: ", self._photoshopPath)
+        form.addRow("Path to executable: ", self._photoshopPath)
 
         layout.addLayout(form)
         layout.addWidget(LabeledDivider('Automatic1111', add_top_margin=True))
@@ -39,8 +39,8 @@ class PathSettingsWidget(QtWidgets.QFrame):
         form.setContentsMargins(16, 0, 0, 0)
         form.setSpacing(16)
 
-        form.addRow("Automatic1111 root folder: ", self._automaticPath)
-        form.addRow("Automatic1111 Url: ", self._automaticUrl)
+        form.addRow("Root folder: ", self._automaticPath)
+        form.addRow("Webui Url: ", self._automaticUrl)
 
         layout.addLayout(form)
         layout.addStretch()
