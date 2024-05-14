@@ -1,0 +1,5 @@
+HIRES_FIX_ENABLED = 'hrFix/enabled'
+HIRES_FIX_UPSCALER = 'hrFix/upscaler'
+HIRES_FIX_STEPS = 'hrFix/steps'
+HIRES_FIX_DENOISING = 'hrFix/denoising'
+HIRES_FIX_UPSCALE_BY = 'hrFix/rate'

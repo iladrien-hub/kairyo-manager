@@ -2,6 +2,7 @@ from core.extension import KairyoExtension
 from core.styling.icon import load_icon
 
 from .tasks.upscale import UpscaleProjectTask
+from .settings.hiresfix import HiresFixSettings
 
 
 class UpscalerExtension(KairyoExtension):
@@ -12,6 +13,8 @@ class UpscalerExtension(KairyoExtension):
         action = menu.addAction('Run Upscaler')
         action.setIcon(load_icon(':/upscaler/sparkles.svg', fill="#51f66f"))
         action.triggered.connect(self.on_upscale_triggered)
+
+        self.api.user_interface.register_settings('Hires Fix.', HiresFixSettings)
 
     def on_upscale_triggered(self):
         project = self.api.storage.project
