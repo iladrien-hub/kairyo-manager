@@ -44,6 +44,9 @@ class DarkTheme(object):
             Style('QLabel', {
                 'color': self.text_200,
             }),
+            Style('QLabel:disabled', {
+                'color': self.text_100,
+            }),
             Style('LabeledDivider > QFrame[frameShape="4"]', {
                 'color': self.text_100,
             }),
@@ -210,6 +213,11 @@ class DarkTheme(object):
                 'border': f'1px solid {self.surface_50}',
                 'padding': '4px'
             }),
+            Style('QLineEdit:disabled', {
+                'background-color': self.surface_300,
+                'border': f'1px solid {self.surface_100}',
+                'color': self.text_100
+            }),
             Style('QLineEdit, QTextEdit', {
                 'background-color': self.surface_200,
                 'border': f'1px solid {self.surface_50}',
@@ -236,6 +244,9 @@ class DarkTheme(object):
                 'border': f'2px solid {self.surface_300}',
                 'border-radius': '9px'
             }),
+            Style('QSlider::handle:disabled', {
+                'background': self.surface_400,
+            }),
             Style('QSlider::handle:horizontal', {
                 'margin': '-7px 0px'
             }),
@@ -250,6 +261,11 @@ class DarkTheme(object):
                 'padding': '4px 6px',
                 'border': f'1px solid {self.surface_50}',
                 'background': self.surface_200,
+            }),
+            Style('QComboBox:disabled', {
+                'color': self.text_100,
+                'border': f'1px solid {self.surface_100}',
+                'background': self.surface_300,
             }),
             Style('QComboBox QAbstractItemView', {
                 'color': self.text_200,
