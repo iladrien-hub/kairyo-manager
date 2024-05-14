@@ -93,6 +93,10 @@ class SettingsWidget(QtWidgets.QFrame):
             self._stack.addWidget(widget)
             child.setData(0, Qt.UserRole, widget)
 
+        self._tree.setSortingEnabled(True)
+        self._tree.sortByColumn(0, Qt.SortOrder.AscendingOrder)
+        self._tree.setSortingEnabled(False)
+
     def updateUi(self):
         self._tree.setCurrentIndex(self._tree.model().index(0, 0))
 
