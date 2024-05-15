@@ -1,5 +1,6 @@
 from core.extension import KairyoExtension
 from core.styling.icon import load_icon
+from .settings.facefeatures import FaceFeaturesSettings
 from .settings.adetailer import ADetailerSettings
 from .settings.hiresfix import HiresFixSettings
 from .tasks.upscale import UpscaleProjectTask
@@ -17,6 +18,7 @@ class UpscalerExtension(KairyoExtension):
 
         self.api.user_interface.register_settings(['Upscaler'], 'Hires Fix.', HiresFixSettings)
         self.api.user_interface.register_settings(['Upscaler'], 'ADetailer', ADetailerSettings)
+        self.api.user_interface.register_settings(['Upscaler'], 'Face Features', FaceFeaturesSettings)
 
     def on_upscale_triggered(self):
         project = self.api.storage.project

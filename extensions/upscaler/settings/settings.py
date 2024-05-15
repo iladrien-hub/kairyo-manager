@@ -27,3 +27,5 @@ AD_CHECKPOINT = 'ADetailer/adCheckpoint'
 
 AD_USE_SAMPLER = 'ADetailer/adUseSampler'
 AD_SAMPLER = 'ADetailer/adSampler'
+
+AD_FACE_FEATURES = 'ADetailer/adFaceFeatures'

@@ -1,4 +1,5 @@
 import copy
+import re
 import time
 
 from PyQt5 import QtCore
@@ -11,6 +12,7 @@ from ..settings.settings import *
 
 
 class UpscaleProjectTask(Txt2ImgTask):
+    __re_eyes_color = re.compile(r'(?P<color>[a-zA-z]*) eyes')
 
     def __init__(self, project: Project):
         super().__init__()
@@ -19,6 +21,11 @@ class UpscaleProjectTask(Txt2ImgTask):
 
     def inflate_params(self, settings: QtCore.QSettings, params: dict):
         params = copy.deepcopy(params)
+
+        eyes_color = self.__re_eyes_color.search(params['prompt'])
+        eyes_color = eyes_color.group('color') if eyes_color else ""
+
+        face_features = list(filter(lambda x: x in params['prompt'], settings.value(AD_FACE_FEATURES, [], str)))
 
         if settings.value(HIRES_FIX_ENABLED, False, bool):
             params |= {
@@ -36,7 +43,10 @@ class UpscaleProjectTask(Txt2ImgTask):
             ad = {
                 "ad_model": settings.value(f"{AD_MODEL}_{ad_idx}", "", str),
                 # "ad_model_classes": "",
-                "ad_prompt": settings.value(f"{AD_PROMPT}_{ad_idx}", "", str),
+                "ad_prompt": settings.value(f"{AD_PROMPT}_{ad_idx}", "", str).format(
+                    eyes_color=eyes_color,
+                    face_features=", ".join(face_features)
+                ),
                 "ad_negative_prompt": settings.value(f"{AD_NEG_PROMPT}_{ad_idx}", "", str),
                 "ad_confidence": settings.value(f"{AD_MODEL_CONFIDENCE}_{ad_idx}", 0.3, float),
                 "ad_mask_k_largest": settings.value(f"{AD_MASK_K_LARGEST}_{ad_idx}", 0, int),
