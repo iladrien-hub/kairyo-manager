@@ -1,9 +1,10 @@
-from typing import Dict, Type
+from typing import Dict, Type, List
 
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QTreeWidgetItem
 
+from core.user_interface import SettingsNode
 from core.widgets.settings import Setting, SettingCallbacks
 
 
@@ -82,16 +83,21 @@ class SettingsWidget(QtWidgets.QFrame):
         self._footer.save.clicked.connect(self.on_saveButton_clicked)
         self._footer.cancel.clicked.connect(self.on_cancelButton_clicked)
 
-    def populateTree(self, settings: Dict[str, Type[QtWidgets.QWidget]], root=None):
+    def populateTree(self, settings: List[SettingsNode], root=None):
         root = root if root else self._tree
 
-        for k, v in settings.items():
+        for item in settings:
             child = QTreeWidgetItem(root)
-            child.setText(0, k)
+            child.setText(0, item.title)
 
-            widget = v()
+            constructor = item.constructor or QtWidgets.QLabel
+            widget = constructor()
+
             self._stack.addWidget(widget)
             child.setData(0, Qt.UserRole, widget)
+
+            if item.children:
+                self.populateTree(item.children, child)
 
         self._tree.setSortingEnabled(True)
         self._tree.sortByColumn(0, Qt.SortOrder.AscendingOrder)

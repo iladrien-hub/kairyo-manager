@@ -26,7 +26,7 @@ class MainWindow(FramelessWindow):
         storage.projectChanged.connect(self.on_storage_projectChanged)
         storage.imageChanged.connect(self.on_storage_imageChanged)
 
-        api.user_interface.register_settings('Path', PathSettingsWidget)
+        api.user_interface.register_settings([], 'General', PathSettingsWidget)
 
     def updateTitle(self):
         title = []

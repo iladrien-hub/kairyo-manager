@@ -1,3 +1,4 @@
+import dataclasses
 import typing
 
 from PyQt5 import QtWidgets, QtGui
@@ -8,15 +9,47 @@ if typing.TYPE_CHECKING:
     from mainwindow import MainWindow
 
 
+@dataclasses.dataclass
+class SettingsNode:
+    title: str
+    constructor: typing.Type[QtWidgets.QWidget] = None
+    children: typing.List['SettingsNode'] = dataclasses.field(default_factory=list)
+
+
+class SettingsTree:
+
+    def __init__(self):
+        self._tree: typing.List[SettingsNode] = []
+
+    def find_node_or_create(self, name: str, nodes: typing.List[SettingsNode]):
+        ret = next(filter(lambda x: x.title == name, nodes), None)
+        if ret is None:
+            ret = SettingsNode(name)
+            nodes.append(ret)
+        return ret.children
+
+    def add_node(self, path: typing.List[str], name: str, constructor: typing.Type[QtWidgets.QWidget]):
+        target = self._tree
+        for item in path:
+            target = self.find_node_or_create(item, target)
+
+        target.append(SettingsNode(name, constructor))
+
+    @property
+    def nodes(self) -> typing.List[SettingsNode]:
+        return self._tree
+
+
 class UserInterface:
     def __init__(self, window: 'MainWindow'):
         self._window = window
-        self._settings: typing.Dict[str, typing.Type[QtWidgets.QWidget]] = {}
+        self._settings: SettingsTree = SettingsTree()
 
-    def register_settings(self, name: str, widget_type: typing.Type[QtWidgets.QWidget]):
-        if name in self._settings:
-            raise ValueError(f'\"{name}\" already exists')
-        self._settings[name] = widget_type
+    def register_settings(self, path: typing.List[str], name: str, constructor: typing.Type[QtWidgets.QWidget]):
+        # if name in self._settings:
+        #     raise ValueError(f'\"{name}\" already exists')
+        # self._settings[name] = widget_type
+        self._settings.add_node(path, name, constructor)
 
     def register_tab(self, name: str, widget: QtWidgets.QWidget, icon: QtGui.QIcon = None):
         tab_idx = self._window.tabs.addTab(widget, name)
@@ -44,5 +77,5 @@ class UserInterface:
         return self._window
 
     @property
-    def settings(self):
-        return self._settings
+    def settings(self) -> typing.List[SettingsNode]:
+        return self._settings.nodes
