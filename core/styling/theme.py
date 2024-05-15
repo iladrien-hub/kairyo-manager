@@ -394,6 +394,10 @@ class DarkTheme(object):
                 'border-left': f'1px solid {self.surface_50}',
                 'border-top': f'1px solid {self.surface_50}',
             }),
+            Style('QFrame#imageListFooter', {
+                'border-right': f'1px solid {self.surface_50}',
+                'border-top': f'1px solid {self.surface_50}',
+            }),
             Style('QListWidget#commitsList', {
                 'border': 'none',
                 'background': self.surface_200,

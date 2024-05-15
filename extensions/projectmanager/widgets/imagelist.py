@@ -1,6 +1,5 @@
 import logging
 import queue
-import time
 from enum import Enum
 from typing import List, Optional
 
@@ -10,7 +9,6 @@ from PyQt5.QtCore import QThread
 from core.api import KairyoApi
 from core.project import ProjectImage
 from core.styling.icon import load_icon
-from core.util.slot import safeSlot
 
 
 class ImageListItem(QtWidgets.QListWidgetItem):
@@ -248,11 +246,24 @@ class ProjectImageList(QtWidgets.QWidget):
         self._bar = ImageListToolbar(self, self._list)
         self._bar.setObjectName('imageListToolbar')
 
+        self._footer = QtWidgets.QFrame()
+        self._footerLabel = QtWidgets.QLabel('')
+        self._footer.setObjectName('imageListFooter')
+        self._footer.setFixedHeight(26)
+
+        footer = QtWidgets.QVBoxLayout()
+        footer.addWidget(self._footerLabel)
+        footer.setContentsMargins(4, 0, 0, 0)
+        footer.setSpacing(0)
+
+        self._footer.setLayout(footer)
+
         layout = QtWidgets.QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
         layout.addWidget(self._bar)
         layout.addWidget(self._list)
+        layout.addWidget(self._footer)
         self.setLayout(layout)
 
         self.__loader_thread = QThread()
@@ -263,6 +274,10 @@ class ProjectImageList(QtWidgets.QWidget):
         self.__loader_thread.start()
 
         QtCore.QMetaObject.connectSlotsByName(self)
+        self._list.model().rowsInserted.connect(self.updateFooter)
+        self._list.model().rowsRemoved.connect(self.updateFooter)
+
+        self.updateFooter()
 
     def sync(self):
         try:
@@ -275,6 +290,11 @@ class ProjectImageList(QtWidgets.QWidget):
             self._list.sortItems()
         except BaseException as e:
             logging.error("", exc_info=e)
+
+    def updateFooter(self):
+        count = self._list.count()
+        label = 'item' if count == 1 else 'items'
+        self._footerLabel.setText(f"{count} {label}")
 
     def on_projectImageList_currentItemChanged(self):
         item = self._list.currentItem()
