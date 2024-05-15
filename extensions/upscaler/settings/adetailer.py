@@ -235,7 +235,7 @@ class ADetailerSettings(QtWidgets.QFrame):
             scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             scroll.setWidgetResizable(True)
 
-            item = ADetailerItemSettings(ordinal)
+            item = ADetailerItemSettings(str(i))
             scroll.setWidget(item)
             self._items.append(item)
 
