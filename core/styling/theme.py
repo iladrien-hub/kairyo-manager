@@ -353,6 +353,29 @@ class DarkTheme(object):
             Style('FileInput', {
                 'qproperty-iconColor': self.text_100,
             }),
+            Style('EditableList', {
+                'border': f'1px solid {self.surface_50}',
+            }),
+            Style('EditableList > QListWidget', {
+                'border': 'none',
+                'background': self.surface_200
+            }),
+            Style('QListView::item', {
+                'color': self.text_200,
+            }),
+            Style('QListView::item:hover', {
+                'background': self.surface_400
+            }),
+            Style('QListView::item:selected', {
+                'background': self.accent_200
+            }),
+            Style('QListView::item QLineEdit', {
+                'padding': '0px'
+            }),
+            Style('ToolbarButton', {
+                'qproperty-iconColor': self.text_200,
+                'qproperty-iconDisabledColor': self.darker_hex(self.text_100, 1.5),
+            }),
             # region: ProjectManager
             Style('QListWidget#projectImageList', {
                 'border': 'none',

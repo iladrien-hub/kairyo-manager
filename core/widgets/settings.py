@@ -3,6 +3,7 @@ from typing import Optional, Any
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QSizePolicy
 
+from .editablelist import EditableList
 from .fileinput import FileInput
 from .slider import FancySlider
 
@@ -140,8 +141,23 @@ class BooleanSetting(QtWidgets.QCheckBox, Setting):
         return False
 
 
-class ListSetting(Setting):
-    pass
+class ListSetting(EditableList, Setting):
+    def init(self):
+        self.listChanged.connect(self.emit_settingChanged)
+
+    def changed(self) -> bool:
+        return self.value() != self._settings.value(self.key, self._default, str)
+
+    def restore(self):
+        self.clear()
+        for item in self._settings.value(self.key, self._default, str):
+            self.addItem(item)
+
+    def save(self):
+        self._settings.setValue(self.key, self.value())
+
+    def defaultFactory(self):
+        return []
 
 
 class OptionsSetting(QtWidgets.QComboBox, Setting):

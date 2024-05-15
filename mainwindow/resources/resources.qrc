@@ -9,6 +9,10 @@
     <file>sort-down.svg</file>
     <file>folder-open.svg</file>
     <file>check.svg</file>
+    <file>down.svg</file>
+    <file>up.svg</file>
+    <file>plus.svg</file>
+    <file>minus.svg</file>
     <file>Icon512.ico</file>
   </qresource>
 </RCC>
