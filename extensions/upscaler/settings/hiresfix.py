@@ -19,9 +19,6 @@ class HiresFixSettings(QtWidgets.QFrame):
         self._enabled.setText('Enabled')
 
         self._upscaler = sw.OptionsSetting(HIRES_FIX_UPSCALER)
-        self._upscaler.addItem('one')
-        self._upscaler.addItem('two')
-        self._upscaler.addItem('three')
 
         self._steps = sw.SliderSetting(HIRES_FIX_STEPS)
         self._steps.setRange(1, 150, 0)
@@ -70,7 +67,6 @@ class HiresFixSettings(QtWidgets.QFrame):
         self.loadUpscalers()
 
     def loadUpscalers(self):
-        self._upscaler.clear()
         self._upscaler.setEnabled(False)
 
         url = KairyoApi.instance().settings.value(AUTOMATIC_URL)
@@ -84,6 +80,8 @@ class HiresFixSettings(QtWidgets.QFrame):
 
     def on_upscalers_reply(self, reply: QNetworkReply):
         if (error := reply.error()) == QNetworkReply.NoError:
+            self._upscaler.clear()
+
             data = reply.readAll()
             data = ujson.loads(data)
 
