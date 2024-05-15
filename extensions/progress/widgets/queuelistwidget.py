@@ -112,13 +112,7 @@ class QueueListWidget(QtWidgets.QFrame):
         self._list = QtWidgets.QListWidget()
         self._toolBar = ToolBar(self)
 
-        self._cancelButton = self._toolBar.addButton(
-            load_icon(
-                ':/progress/ban.svg',
-                KairyoApi.instance().theme.text_200
-            ),
-            'Cancel Current Task'
-        )
+        self._cancelButton = self._toolBar.addButton(':/progress/ban.svg', 'Cancel Current Task')
 
         layout = QtWidgets.QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
