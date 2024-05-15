@@ -25,5 +25,5 @@ AD_INPAINT_WIDTH = 'ADetailer/adInpaintWidth'
 AD_USE_CHECKPOINT = 'ADetailer/adUseCheckpoint'
 AD_CHECKPOINT = 'ADetailer/adCheckpoint'
 
-AD_USE_SAMPLER = 'ADetailer/adUseCheckpoint'
-AD_SAMPLER = 'ADetailer/adCheckpoint'
+AD_USE_SAMPLER = 'ADetailer/adUseSampler'
+AD_SAMPLER = 'ADetailer/adSampler'
