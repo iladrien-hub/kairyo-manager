@@ -41,6 +41,9 @@ class DarkTheme(object):
                 'background-color': self.surface_300,
                 'outline': 'none'
             }),
+            Style('QScrollArea', {
+                'border': 'none',
+            }),
             Style('QLabel', {
                 'color': self.text_200,
             }),
