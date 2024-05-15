@@ -35,7 +35,7 @@ class MainWindow(FramelessWindow):
         if storage.project:
             title.append(storage.project.meta.name)
             if storage.image:
-                pass
+                title.append(storage.image.name)
 
         title = " - ".join(title)
         self.titlebar().setLabel(title)
