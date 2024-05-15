@@ -149,7 +149,7 @@ class TabWidget(QtWidgets.QWidget):
                 self._stackWidget.setCurrentIndex(new_tab)
                 self._stackWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
-                self.setMaximumSize(2147483647, 2147483647)
+                self.setMaximumSize(16777215, 16777215)
                 self.setMinimumSize(50, 50)
 
             self._currentTab = new_tab
