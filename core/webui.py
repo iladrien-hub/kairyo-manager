@@ -70,3 +70,9 @@ class WebuiApi(object):
 
     def upscalers(self):
         return self._request('GET', '/sdapi/v1/upscalers')
+
+    def samplers(self):
+        return self._request('GET', '/sdapi/v1/samplers')
+
+    def sd_models(self):
+        return self._request('GET', '/sdapi/v1/sd-models')

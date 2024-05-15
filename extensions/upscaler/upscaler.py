@@ -1,10 +1,8 @@
-from PyQt5 import QtWidgets
-
 from core.extension import KairyoExtension
 from core.styling.icon import load_icon
-
-from .tasks.upscale import UpscaleProjectTask
+from .settings.adetailer import ADetailerSettings
 from .settings.hiresfix import HiresFixSettings
+from .tasks.upscale import UpscaleProjectTask
 
 
 class UpscalerExtension(KairyoExtension):
@@ -17,6 +15,7 @@ class UpscalerExtension(KairyoExtension):
         action.triggered.connect(self.on_upscale_triggered)
 
         self.api.user_interface.register_settings(['Upscaler'], 'Hires Fix.', HiresFixSettings)
+        self.api.user_interface.register_settings(['Upscaler'], 'ADetailer', ADetailerSettings)
 
     def on_upscale_triggered(self):
         project = self.api.storage.project
