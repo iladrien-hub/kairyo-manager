@@ -13,6 +13,7 @@ class UpscalerExtension(KairyoExtension):
         action = menu.addAction('Run Upscaler')
         action.setIcon(load_icon(':/upscaler/sparkles.svg', fill="#51f66f"))
         action.triggered.connect(self.on_upscale_triggered)
+        action.setShortcut('Ctrl+Shift+U')
 
         self.api.user_interface.register_settings(['Upscaler'], 'Hires Fix.', HiresFixSettings)
         self.api.user_interface.register_settings(['Upscaler'], 'ADetailer', ADetailerSettings)
