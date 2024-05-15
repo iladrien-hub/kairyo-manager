@@ -1,3 +1,4 @@
+import contextlib
 import ctypes
 import importlib
 import inspect
@@ -100,13 +101,10 @@ def load_extensions(api: KairyoApi):
 
 
 def on_focus_changed(old_widget: QtWidgets.QWidget, new_widget: QtWidgets.QWidget):
-    try:
-        if old_widget:
-            old_widget.window().titlebar().setActive(False)
-        if new_widget:
-            new_widget.window().titlebar().setActive(True)
-    except BaseException as e:
-        logging.error("", exc_info=e)
+    with contextlib.suppress(BaseException):
+        old_widget.window().titlebar().setActive(False)
+    with contextlib.suppress(BaseException):
+        new_widget.window().titlebar().setActive(True)
 
 
 def qtMessageHandler(type: QtCore.QtMsgType, context: QtCore.QMessageLogContext, msg: str):
