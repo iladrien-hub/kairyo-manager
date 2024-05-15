@@ -1,10 +1,10 @@
 import ujson
 from PyQt5 import QtWidgets
-from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkReply
+from PyQt5.QtNetwork import QNetworkReply
 
 from core.api import KairyoApi
 from core.settings import AUTOMATIC_URL
-from core.webui import WebuiApi
+from core.webui import WebuiApi, HttpBackend
 from core.widgets import settings as sw
 from core.widgets.forms import LabeledDivider
 from .settings import HIRES_FIX_UPSCALER, HIRES_FIX_ENABLED, HIRES_FIX_STEPS, HIRES_FIX_DENOISING, HIRES_FIX_UPSCALE_BY
@@ -73,10 +73,7 @@ class HiresFixSettings(QtWidgets.QFrame):
         if not url:
             return
 
-        qnam = QNetworkAccessManager(self)
-        qnam.finished.connect(self.on_upscalers_reply)
-
-        WebuiApi(url, qnam).upscalers()
+        WebuiApi(url, HttpBackend.Qt).upscalers().connect(self, self.on_upscalers_reply).perform()
 
     def on_upscalers_reply(self, reply: QNetworkReply):
         if (error := reply.error()) == QNetworkReply.NoError:
