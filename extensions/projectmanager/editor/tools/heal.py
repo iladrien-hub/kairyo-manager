@@ -20,7 +20,7 @@ class HealingTool(BaseEditorTool):
         image = self.model().cv2()
         result = cv2.inpaint(image, mask, 3, cv2.INPAINT_TELEA)
 
-        self.model().save_cv2(result)
+        self.model().saveCv2(result)
 
     def clear(self):
         size = self.size()

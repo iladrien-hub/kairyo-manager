@@ -230,8 +230,11 @@ class ImageEditorWidget(QtWidgets.QFrame):
 
         self._undoButton = self._toolBar.addButton(':/projectmanager/rotate-left.svg', 'Undo (Ctrl+Shift+Z)')
         self._undoButton.setShortcut('Ctrl+Shift+Z')
-        self._redoButton = self._toolBar.addButton(':/projectmanager/rotate-right.svg', 'Undo (Ctrl+Shift+R)')
+        self._redoButton = self._toolBar.addButton(':/projectmanager/rotate-right.svg', 'Redo (Ctrl+Shift+R)')
         self._redoButton.setShortcut('Ctrl+Shift+R')
+
+        self._saveButton = self._toolBar.addButton(':/projectmanager/floppy-disk.svg', 'Save (Ctrl+S)')
+        self._saveButton.setShortcut('Ctrl+S')
 
         self._scene = ImageEditorSceneWidget()
 
@@ -248,6 +251,7 @@ class ImageEditorWidget(QtWidgets.QFrame):
         self._fitButton.clicked.connect(self.on_fitButton_clicked)
         self._undoButton.clicked.connect(self.on_undoButton_clicked)
         self._redoButton.clicked.connect(self.on_redoButton_clicked)
+        self._saveButton.clicked.connect(self.on_saveButton_clicked)
 
         self._toolsGroup.buttonPressed.connect(self.on_buttonGroup_pressed)
         self._toolsGroup.buttonClicked.connect(self.on_buttonGroup_clicked)
@@ -272,13 +276,15 @@ class ImageEditorWidget(QtWidgets.QFrame):
             self._fitButton.setEnabled(False)
             self._actualSizeButton.setEnabled(False)
             self._healingToolButton.setEnabled(False)
+            self._saveButton.setEnabled(False)
             return
 
-        self._undoButton.setEnabled(self._image.has_undo())
-        self._redoButton.setEnabled(self._image.has_redo())
+        self._undoButton.setEnabled(self._image.hasUndo())
+        self._redoButton.setEnabled(self._image.hasRedo())
         self._fitButton.setEnabled(True)
         self._actualSizeButton.setEnabled(True)
         self._healingToolButton.setEnabled(True)
+        self._saveButton.setEnabled(not self._image.saved())
 
     def on_actualSizeButton_clicked(self):
         self._scene.resetZoom()
@@ -291,6 +297,10 @@ class ImageEditorWidget(QtWidgets.QFrame):
 
     def on_redoButton_clicked(self):
         self._image.redo()
+
+    def on_saveButton_clicked(self):
+        self._image.save()
+        self._saveButton.setEnabled(not self._image.saved())
 
     def on_buttonGroup_pressed(self, button: QtWidgets.QToolButton):
         self._toolsGroup.setExclusive(not button.isChecked())

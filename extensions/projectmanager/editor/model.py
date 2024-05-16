@@ -20,6 +20,8 @@ class ImageModel(QtCore.QObject):
         self.__stack: list = []
         self.__stack_cursor = -1
 
+        self.__saved = True
+
     def data(self) -> bytes:
         if len(self.__stack) > 0 and self.__stack_cursor >= 0:
             return self.__stack[self.__stack_cursor]
@@ -35,23 +37,36 @@ class ImageModel(QtCore.QObject):
         pixmap.loadFromData(self.data())
         return pixmap
 
-    def save_cv2(self, im: np.ndarray):
+    def saveCv2(self, im: np.ndarray):
         self.__stack = self.__stack[:self.__stack_cursor + 1]
         self.__stack.append(cv2.imencode('.png', im)[1].tostring())
         self.__stack_cursor = len(self.__stack) - 1
 
+        self.__saved = False
         self.__callbacks.bufferUpdated.emit()
 
-    def has_undo(self):
+    def hasUndo(self):
         return self.__stack_cursor >= 0
 
-    def has_redo(self):
+    def hasRedo(self):
         return self.__stack_cursor < len(self.__stack) - 1
 
     def undo(self):
         self.__stack_cursor = max(self.__stack_cursor - 1, -1)
+        self.__saved = False
         self.__callbacks.bufferUpdated.emit()
 
     def redo(self):
         self.__stack_cursor = min(self.__stack_cursor + 1, len(self.__stack) - 1)
+        self.__saved = False
         self.__callbacks.bufferUpdated.emit()
+
+    def saved(self):
+        return self.__saved
+
+    def save(self):
+        self.__saved = True
+        self.__image.update(self.data())
+        self.__callbacks.bufferUpdated.emit()
+
+
