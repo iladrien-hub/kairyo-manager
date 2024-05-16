@@ -4,7 +4,11 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QSizePolicy
 
+from core.project import ProjectImage
 from core.widgets.toolbar import ToolBar
+from editor.model import ImageModel, ImageModelCallbacks
+from editor.tools.base import BaseEditorTool
+from editor.tools.heal import HealingTool
 
 
 class ImageEditorSceneWidget(QtWidgets.QFrame):
@@ -22,6 +26,8 @@ class ImageEditorSceneWidget(QtWidgets.QFrame):
         self._isPanActive = False
         self._panAnchor = QtCore.QPoint()
         self._panOrigin = QtCore.QPoint()
+
+        self._tool: Optional[BaseEditorTool] = None
 
         self.key_Pan = Qt.Key_Space
         self.key_Zoom = Qt.Key_Control
@@ -59,9 +65,19 @@ class ImageEditorSceneWidget(QtWidgets.QFrame):
         else:
             self.setCursor(Qt.ArrowCursor)
 
+    def clearTool(self):
+        if self._tool is not None:
+            if self._pixmap is not None:
+                self._tool.setSize(self._pixmap.size())
+            self._tool.clear()
+
+    def setTool(self, tool: Optional[BaseEditorTool]):
+        self._tool = tool
+        self.clearTool()
+
     def setPixmap(self, pixmap: QtGui.QPixmap):
         self._pixmap = pixmap
-        self.fit()
+        self.update()
 
     def setZoom(self, new_zoom: float, anchor: QtCore.QPoint = None):
         # save the old zoom value, we'll need it later
@@ -115,24 +131,13 @@ class ImageEditorSceneWidget(QtWidgets.QFrame):
 
         painter.drawPixmap(self._viewport, self._pixmap)
 
-    def mousePressEvent(self, evt: Optional[QtGui.QMouseEvent]) -> None:
-        if not evt:
-            return
-
-        if self._activeKeys[self.key_Pan] and evt.button() == Qt.LeftButton:
-            self._isPanActive = True
-            self._panAnchor = evt.pos()
-            self._panOrigin = self._viewport.center()
-
-        self.updateCursor()
+        if self._tool and (pixmap := self._tool.paintEvent()):
+            painter.drawPixmap(self._viewport, pixmap)
 
     def keyPressEvent(self, evt: Optional[QtGui.QKeyEvent]) -> None:
         key = evt.key()
         if key in self._activeKeys:
             self._activeKeys[key] = True
-
-        if key == Qt.Key_S:
-            self.fit()
 
         self.updateCursor()
 
@@ -143,12 +148,30 @@ class ImageEditorSceneWidget(QtWidgets.QFrame):
 
         self.updateCursor()
 
+    def mousePressEvent(self, evt: Optional[QtGui.QMouseEvent]) -> None:
+        if not evt:
+            return
+
+        if self._activeKeys[self.key_Pan] and evt.button() == Qt.LeftButton:
+            self._isPanActive = True
+            self._panAnchor = evt.pos()
+            self._panOrigin = self._viewport.center()
+
+        elif self._tool is not None:
+            self._tool.mousePressEvent((evt.pos() - self._viewport.topLeft()) / self._zoom)
+            self.update()
+
+        self.updateCursor()
+
     def mouseMoveEvent(self, evt: Optional[QtGui.QMouseEvent]) -> None:
         if not evt:
             return
 
         if self._isPanActive:
             self._viewport.moveCenter(self._panOrigin + evt.pos() - self._panAnchor)
+            self.update()
+        elif self._tool is not None:
+            self._tool.mouseMoveEvent((evt.pos() - self._viewport.topLeft()) / self._zoom)
             self.update()
 
     def mouseReleaseEvent(self, evt: Optional[QtGui.QMouseEvent]) -> None:
@@ -157,6 +180,9 @@ class ImageEditorSceneWidget(QtWidgets.QFrame):
 
         if self._isPanActive:
             self._isPanActive = False
+        elif self._tool is not None:
+            self._tool.mouseReleaseEvent((evt.pos() - self._viewport.topLeft()) / self._zoom)
+            self.update()
 
         self.updateCursor()
 
@@ -180,10 +206,32 @@ class ImageEditorWidget(QtWidgets.QFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self._image: Optional[ImageModel] = None
+        self._image_callbacks = ImageModelCallbacks()
+
         self._toolBar = ToolBar()
         self._toolBar.setFixedHeight(26)
+
+        self._toolsGroup = QtWidgets.QButtonGroup()
+        self._toolsGroup.setExclusive(True)
+
+        self._healingToolButton = self._toolBar.addButton(':/projectmanager/virus-slash.svg', 'Healing Brush (J)')
+        self._healingToolButton.setCheckable(True)
+        self._healingToolButton.setShortcut('J')
+        self._toolsGroup.addButton(self._healingToolButton)
+
+        self._tools = {
+            self._toolsGroup.id(self._healingToolButton): HealingTool
+        }
+
         self._actualSizeButton = self._toolBar.addButton(':/projectmanager/arrows-maximize.svg', 'Actual Size')
-        self._fitButton = self._toolBar.addButton(':/projectmanager/aspect-ratio.svg', 'Fit Zoom to View')
+        self._fitButton = self._toolBar.addButton(':/projectmanager/aspect-ratio.svg', 'Fit Zoom to View (Ctrl+0)')
+        self._fitButton.setShortcut('Ctrl+0')
+
+        self._undoButton = self._toolBar.addButton(':/projectmanager/rotate-left.svg', 'Undo (Ctrl+Shift+Z)')
+        self._undoButton.setShortcut('Ctrl+Shift+Z')
+        self._redoButton = self._toolBar.addButton(':/projectmanager/rotate-right.svg', 'Undo (Ctrl+Shift+R)')
+        self._redoButton.setShortcut('Ctrl+Shift+R')
 
         self._scene = ImageEditorSceneWidget()
 
@@ -198,12 +246,63 @@ class ImageEditorWidget(QtWidgets.QFrame):
 
         self._actualSizeButton.clicked.connect(self.on_actualSizeButton_clicked)
         self._fitButton.clicked.connect(self.on_fitButton_clicked)
+        self._undoButton.clicked.connect(self.on_undoButton_clicked)
+        self._redoButton.clicked.connect(self.on_redoButton_clicked)
 
-    def scene(self):
-        return self._scene
+        self._toolsGroup.buttonPressed.connect(self.on_buttonGroup_pressed)
+        self._toolsGroup.buttonClicked.connect(self.on_buttonGroup_clicked)
+
+        self._image_callbacks.bufferUpdated.connect(self.on_callbacks_bufferUpdated)
+        self.updateButtons()
+
+    def setImage(self, image: ProjectImage):
+        self._image = ImageModel(self._image_callbacks, image)
+        self.updateScene()
+        self._scene.clearTool()
+        self._scene.fit()
+        self.updateButtons()
+
+    def updateScene(self):
+        self._scene.setPixmap(self._image.pixmap())
+
+    def updateButtons(self):
+        if self._image is None:
+            self._undoButton.setEnabled(False)
+            self._redoButton.setEnabled(False)
+            self._fitButton.setEnabled(False)
+            self._actualSizeButton.setEnabled(False)
+            self._healingToolButton.setEnabled(False)
+            return
+
+        self._undoButton.setEnabled(self._image.has_undo())
+        self._redoButton.setEnabled(self._image.has_redo())
+        self._fitButton.setEnabled(True)
+        self._actualSizeButton.setEnabled(True)
+        self._healingToolButton.setEnabled(True)
 
     def on_actualSizeButton_clicked(self):
         self._scene.resetZoom()
 
     def on_fitButton_clicked(self):
         self._scene.fit()
+
+    def on_undoButton_clicked(self):
+        self._image.undo()
+
+    def on_redoButton_clicked(self):
+        self._image.redo()
+
+    def on_buttonGroup_pressed(self, button: QtWidgets.QToolButton):
+        self._toolsGroup.setExclusive(not button.isChecked())
+
+    def on_buttonGroup_clicked(self, button: QtWidgets.QToolButton):
+        self._toolsGroup.setExclusive(True)
+        if button.isChecked():
+            constructor = self._tools.get(self._toolsGroup.id(button))
+            self._scene.setTool(constructor(self._image))
+        else:
+            self._scene.setTool(None)
+
+    def on_callbacks_bufferUpdated(self):
+        self.updateScene()
+        self.updateButtons()

@@ -42,7 +42,4 @@ class ProjectManagerExtension(KairyoExtension):
             self.api.open_project(path)
 
     def on_storage_imageChanged(self):
-        pixmap = QtGui.QPixmap()
-        pixmap.loadFromData(self.api.storage.image.read_version())
-
-        self._main_tab.editor().scene().setPixmap(pixmap)
+        self._main_tab.editor().setImage(self.api.storage.image)

@@ -12,6 +12,9 @@
     <file>maximize.svg</file>
     <file>arrows-maximize.svg</file>
     <file>aspect-ratio.svg</file>
+    <file>virus-slash.svg</file>
+    <file>rotate-left.svg</file>
+    <file>rotate-right.svg</file>
     <file>arrow-down-wide-short.svg</file>
   </qresource>
 </RCC>

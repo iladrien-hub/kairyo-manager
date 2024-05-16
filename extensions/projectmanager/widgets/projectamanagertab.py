@@ -8,7 +8,7 @@ from core.styling.icon import load_icon
 from core.widgets import TabWidget
 from core.widgets.splitter import Splitter
 from .history import ImageHistoryWidget
-from .imageeditor import ImageEditorWidget
+from editor.imageeditor import ImageEditorWidget
 from .imagelist import ProjectImageList
 
 

@@ -189,7 +189,7 @@ class DarkTheme(object):
                 'border-radius': '2px',
                 'padding': '4px',
             }),
-            Style('QToolButton:hover', {
+            Style('QToolButton:hover, QToolButton:checked', {
                 'background': self.hex2rgba(self.surface_500, 127),
             }),
             Style('QToolButton:pressed', {
