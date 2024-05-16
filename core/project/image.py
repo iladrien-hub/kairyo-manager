@@ -80,6 +80,10 @@ class ProjectImage:
         return self._name
 
     @property
+    def path(self):
+        return self._full_path
+
+    @property
     def params(self):
         if self._params is None:
             with open(os.path.join(self._full_path, 'params.json'), 'r', encoding='utf-8') as f:

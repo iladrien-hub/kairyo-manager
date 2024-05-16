@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QSizePolicy
 
 from core.project import ProjectImage
 from core.widgets.toolbar import ToolBar
+from editor.cache import ImageEditorCache
 from editor.model import ImageModel, ImageModelCallbacks
 from editor.tools.base import BaseEditorTool
 from editor.tools.heal import HealingTool
@@ -208,6 +209,7 @@ class ImageEditorWidget(QtWidgets.QFrame):
 
         self._image: Optional[ImageModel] = None
         self._image_callbacks = ImageModelCallbacks()
+        self._image_cache = ImageEditorCache(self._image_callbacks)
 
         self._toolBar = ToolBar()
         self._toolBar.setFixedHeight(26)
@@ -260,7 +262,7 @@ class ImageEditorWidget(QtWidgets.QFrame):
         self.updateButtons()
 
     def setImage(self, image: ProjectImage):
-        self._image = ImageModel(self._image_callbacks, image)
+        self._image = self._image_cache.get(image)
         self.updateScene()
         self._scene.clearTool()
         self._scene.fit()
