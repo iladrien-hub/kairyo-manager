@@ -8,6 +8,7 @@ from core.styling.icon import load_icon
 from core.widgets import TabWidget
 from core.widgets.splitter import Splitter
 from .history import ImageHistoryWidget
+from .imageeditor import ImageEditorWidget
 from .imagelist import ProjectImageList
 
 
@@ -47,6 +48,8 @@ class ProjectManagerTab(QtWidgets.QWidget):
         self._history = ImageHistoryWidget(self)
         self._history.setObjectName('imageHistoryView')
 
+        self._editor = ImageEditorWidget()
+
         self.setupUi()
         QMetaObject.connectSlotsByName(self)
 
@@ -84,9 +87,9 @@ class ProjectManagerTab(QtWidgets.QWidget):
 
         self._topSplitter.addWidget(self._leftTabs)
 
-        label = QLabel("Image preview...")
-        label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self._topSplitter.addWidget(label)
+        # label = QLabel("Image preview...")
+        # label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self._topSplitter.addWidget(self._editor)
         self._topSplitter.setChildrenCollapsible(False)
         self._topSplitter.setHandleWidth(0)
         self._topSplitter.setMinimumHeight(224)
@@ -124,6 +127,9 @@ class ProjectManagerTab(QtWidgets.QWidget):
             self._topSplitter.handle(1).setEnabled(False)
         if self._bottomTabs.currentTab() < 0:
             self._bottomSplitter.handle(1).setEnabled(False)
+
+    def editor(self):
+        return self._editor
 
     # Top tabs
 

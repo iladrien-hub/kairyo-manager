@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtWidgets import QLabel
 
 from core.extension import KairyoExtension
@@ -30,6 +30,8 @@ class ProjectManagerExtension(KairyoExtension):
         open_project.triggered.connect(self.on_open_project)
         open_project.setIcon(load_icon(':projectmanager/folder-open.svg', self.api.theme.text_200))
 
+        self.api.storage.imageChanged.connect(self.on_storage_imageChanged)
+
     def on_create_project(self):
         dialog = self.api.user_interface.create_dialog('Create Project', QLabel('u sure?'))
         dialog.show()
@@ -38,3 +40,9 @@ class ProjectManagerExtension(KairyoExtension):
         path = QtWidgets.QFileDialog.getExistingDirectory(self.api.user_interface.window, 'Select Folder')
         if path:
             self.api.open_project(path)
+
+    def on_storage_imageChanged(self):
+        pixmap = QtGui.QPixmap()
+        pixmap.loadFromData(self.api.storage.image.read_version())
+
+        self._main_tab.editor().scene().setPixmap(pixmap)

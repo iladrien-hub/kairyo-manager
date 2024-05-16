@@ -8,6 +8,10 @@
     <file>code-branch.svg</file>
     <file>folder-open.svg</file>
     <file>crosshairs-simple.svg</file>
+    <file>actual-size.svg</file>
+    <file>maximize.svg</file>
+    <file>arrows-maximize.svg</file>
+    <file>aspect-ratio.svg</file>
     <file>arrow-down-wide-short.svg</file>
   </qresource>
 </RCC>

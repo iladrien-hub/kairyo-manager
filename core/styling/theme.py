@@ -426,6 +426,10 @@ class DarkTheme(object):
                 'background': self.surface_200,
                 'font-size': '14px'
             }),
+            Style('ImageEditorSceneWidget', {
+                'border-top': f'1px solid {self.surface_50}',
+                'background': self.surface_100,
+            }),
             # endregion
             # region: progress-ext
             Style('QueueListWidget', {
