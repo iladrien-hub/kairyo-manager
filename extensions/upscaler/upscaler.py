@@ -24,3 +24,4 @@ class UpscalerExtension(KairyoExtension):
         project = self.api.storage.project
         if project:
             self.api.worker.add_task(UpscaleProjectTask(project))
+            self.api.user_interface.switch_tab_by_name('Queue')

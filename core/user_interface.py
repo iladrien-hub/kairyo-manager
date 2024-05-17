@@ -72,6 +72,9 @@ class UserInterface:
 
         return dialog
 
+    def switch_tab_by_name(self, name: str):
+        self._window.tabs.setCurrentTab(self._window.tabs.tabIndex(name))
+
     @property
     def window(self):
         return self._window

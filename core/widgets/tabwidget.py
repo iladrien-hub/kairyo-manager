@@ -223,3 +223,7 @@ class TabWidget(QtWidgets.QWidget):
         btn = self._tabs[index]
         btn.setIcon(icon)
         btn.setIconSize(QtCore.QSize(12, 12))
+
+    def tabIndex(self, name: str):
+        button = next(filter(lambda x: x.text() == name, self._tabs), None)
+        return self._tabs.index(button) if button else -1
