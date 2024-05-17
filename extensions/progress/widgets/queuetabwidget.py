@@ -1,3 +1,5 @@
+import logging
+
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtCore import Qt
 
@@ -19,6 +21,8 @@ class QueueTabWidget(QtWidgets.QWidget):
 
         self._previewWidget = PreviewGraphicsWidget(self)
         self._previewWidget.setResizeAnchor(QtWidgets.QGraphicsView.AnchorViewCenter)
+        self._previewWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self._previewWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self._previewScene = QtWidgets.QGraphicsScene()
         self._previewPixmapItem = self._previewScene.addPixmap(QtGui.QPixmap())
