@@ -53,6 +53,9 @@ class DarkTheme(object):
             Style('LabeledDivider > QFrame[frameShape="4"]', {
                 'color': self.text_100,
             }),
+            Style('ToolBarSeparator', {
+                'color': self.darker_hex(self.text_100, 2),
+            }),
             Style('QPushButton', {
                 'background': f'qlineargradient(x1:0, y1:0, x2:0, y2:1, '
                               f'stop:0 {self.lighter_hex(self.surface_200, 2.5)}, '

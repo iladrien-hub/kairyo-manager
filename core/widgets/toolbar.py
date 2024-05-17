@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import pyqtProperty
@@ -24,6 +24,8 @@ class ToolbarButton(QtWidgets.QToolButton):
 
         self.__iconDisabledColor = '#000000'
         self.__disabledIcon = load_icon(self.__icon_path, fill=self.__iconDisabledColor)
+
+        self.__data = None
 
         self.setIcon(self.__icon)
 
@@ -51,6 +53,18 @@ class ToolbarButton(QtWidgets.QToolButton):
 
     def changeEvent(self, a0: Optional[QtCore.QEvent]) -> None:
         self.setIcon(self.__icon if self.isEnabled() else self.__disabledIcon)
+
+    def setData(self, data: Any):
+        self.__data = data
+
+    def data(self):
+        return self.__data
+
+
+class ToolBarSeparator(QtWidgets.QFrame):
+    def __init__(self):
+        super().__init__()
+        self.setFrameShape(QtWidgets.QFrame.VLine)
 
 
 class ToolBar(QtWidgets.QFrame):
@@ -81,3 +95,6 @@ class ToolBar(QtWidgets.QFrame):
         self._layout.addWidget(button)
 
         return button
+
+    def addSeparator(self):
+        self._layout.addWidget(ToolBarSeparator())
