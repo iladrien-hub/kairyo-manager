@@ -128,6 +128,9 @@ class EditorScene(QtWidgets.QFrame):
             Qt.Key_Shift: BrushResizeTool(),
         }
 
+        self.__keepFit = False
+        self.__keepFitResetButtons = [Qt.Key_Space, Qt.Key_Control]
+
         self.setMouseTracking(True)
 
     def setDocument(self, document: Document):
@@ -243,6 +246,8 @@ class EditorScene(QtWidgets.QFrame):
         key = evt.key()
         if key in self.__tools and self.__activeTool is None:
             self.__activeTool = self.__tools[key].withDocument(self.__doc)
+            self.__keepFit = self.__keepFit and key not in self.__keepFitResetButtons
+
         self.updateCursor()
 
     def keyReleaseEvent(self, evt: Optional[QtGui.QKeyEvent]) -> None:
@@ -253,6 +258,10 @@ class EditorScene(QtWidgets.QFrame):
         if key in self.__tools and self.__activeTool is self.__tools[key]:
             self.__activeTool = None
         self.updateCursor()
+
+    def resizeEvent(self, a0: Optional[QtGui.QResizeEvent]) -> None:
+        if self.__keepFit:
+            self.fitIntoView()
 
     def fitIntoView(self):
         if self.__doc is None:
@@ -277,6 +286,7 @@ class EditorScene(QtWidgets.QFrame):
         viewport.setScale(new_height / height)
         viewport.moveCenter(self.rect().center())
 
+        self.__keepFit = True
         self.update()
 
     def resetScale(self):
