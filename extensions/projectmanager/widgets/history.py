@@ -70,8 +70,6 @@ class ImageHistoryWidget(QtWidgets.QFrame):
         self._infoBox.setReadOnly(True)
         self._infoFormatter = formatters.HtmlFormatter(full=True, style='stata-dark', nobackground=True)
 
-        print()
-
         self._infoBoxCss = self._infoFormatter.get_style_defs('.highlight')
 
         self._image: Optional[ProjectImage] = None
