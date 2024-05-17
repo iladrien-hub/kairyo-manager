@@ -1,6 +1,7 @@
 import json
 import logging
 from datetime import datetime
+from functools import partial
 from typing import Optional
 
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -57,6 +58,8 @@ class ImageHistoryWidget(QtWidgets.QFrame):
 
         self._commitsList = QtWidgets.QListWidget(self)
         self._commitsList.setObjectName('commitsList')
+        self._commitsList.setContextMenuPolicy(Qt.CustomContextMenu)
+        self._commitsList.customContextMenuRequested.connect(self.on_customContextMenu_requested)
 
         self._previewWidget = PreviewGraphicsWidget(self)
         self._previewWidget.setResizeAnchor(QtWidgets.QGraphicsView.AnchorViewCenter)
@@ -162,6 +165,25 @@ class ImageHistoryWidget(QtWidgets.QFrame):
         self._previewWidget.fitInView(self._previewPixmapItem, Qt.KeepAspectRatio)
         return super(ImageHistoryWidget, self).resizeEvent(a0)
 
+    def on_customContextMenu_requested(self, point):
+        item = self._commitsList.itemAt(point)
+        gpos = self._commitsList.mapToGlobal(point)
+
+        snapshot_hash = item.data(Qt.UserRole)
+
+        menu = QtWidgets.QMenu(self)
+        restore = menu.addAction('Reset to Here...')
+        restore.triggered.connect(partial(self.on_resetToHere_triggered, snapshot_hash))
+
+        menu.exec(gpos)
+
     def on_commitsList_itemSelectionChanged(self):
         self.updateItemsProperties()
         self.updatePreview()
+
+    def on_resetToHere_triggered(self, snapshot_hash):
+        if not self._image:
+            return
+
+        self._image.vcs.load_snapshot(snapshot_hash)
+        self.syncList()

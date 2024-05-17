@@ -64,6 +64,10 @@ class ProjectImage:
     # ------------------------ Properties ------------------------
 
     @property
+    def vcs(self):
+        return self._vcs
+
+    @property
     def meta(self) -> ImageMeta:
         return self._meta
 
