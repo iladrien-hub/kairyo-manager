@@ -6,7 +6,7 @@ from PyQt5 import QtWidgets
 from core.project import ProjectImage
 from core.widgets.toolbar import ToolBar, ToolbarButton
 from .scene import EditorScene
-from ..model.document import Document
+from ..model.document import Document, EditorCallbacks
 from ..tools.healingbrush import HealingBrushTool
 
 
@@ -38,6 +38,25 @@ class EditorWidget(QtWidgets.QFrame):
         self._fitIntoViewButton.clicked.connect(self.on_fitIntoViewButton_clicked)
         self._fitIntoViewButton.setShortcut('Ctrl+0')
 
+        self._toolBar.addSeparator()
+
+        self._undoButton = self._toolBar.addButton(':/projectmanager/rotate-left.svg', 'Undo (Ctrl+Z)')
+        self._undoButton.clicked.connect(self.on_undoButton_clicked)
+        self._undoButton.setShortcut('Ctrl+Z')
+
+        self._redoButton = self._toolBar.addButton(':/projectmanager/rotate-right.svg', 'Redo (Ctrl+R)')
+        self._redoButton.clicked.connect(self.on_redoButton_clicked)
+        self._redoButton.setShortcut('Ctrl+R')
+
+        self._toolBar.addSeparator()
+
+        self._saveButton = self._toolBar.addButton(':/projectmanager/floppy-disk.svg', 'Save (Ctrl+S)')
+        self._saveButton.clicked.connect(self.on_saveButton_clicked)
+        self._saveButton.setShortcut('Ctrl+S')
+
+        self._callbacks = EditorCallbacks()
+        self._callbacks.stateUpdated.connect(self.updateButtons)
+
         layout = QtWidgets.QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
@@ -54,6 +73,10 @@ class EditorWidget(QtWidgets.QFrame):
         self._fitIntoViewButton.setEnabled(has_doc)
         self._resetScaleButton.setEnabled(has_doc)
 
+        self._undoButton.setEnabled(has_doc and self._document.hasUndo())
+        self._redoButton.setEnabled(has_doc and self._document.hasRedo())
+        self._saveButton.setEnabled(has_doc and not self._document.saved())
+
         self._healingToolButton.setEnabled(has_doc)
         self._healingToolButton.setChecked(has_doc and isinstance(self._document.tool(), HealingBrushTool))
 
@@ -62,6 +85,7 @@ class EditorWidget(QtWidgets.QFrame):
 
     def setImage(self, image: ProjectImage):
         self._document = Document.from_image(image)
+        self._document.setCallbacks(self._callbacks)
         self._scene.setDocument(self._document)
         self._scene.fitIntoView()
         self.updateButtons()
@@ -83,3 +107,17 @@ class EditorWidget(QtWidgets.QFrame):
 
         if self._document:
             self._document.switchTool(tool)
+
+    def on_undoButton_clicked(self):
+        if self._document:
+            self._document.undo()
+            self._scene.update()
+
+    def on_redoButton_clicked(self):
+        if self._document:
+            self._document.redo()
+            self._scene.update()
+
+    def on_saveButton_clicked(self):
+        if self._document:
+            self._document.save()

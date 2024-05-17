@@ -11,6 +11,10 @@ from .viewport import Viewport
 from ..tools.base import EditorToolBase
 
 
+class EditorCallbacks(QtCore.QObject):
+    stateUpdated = QtCore.pyqtSignal()
+
+
 class Document:
     __CACHE: Dict[str, 'Document'] = {}
 
@@ -18,11 +22,13 @@ class Document:
         super().__init__()
 
         self.__image = image
+        self.__callbacks: Optional[EditorCallbacks] = None
 
         self.__original: Optional[np.ndarray] = None
         self.__stack: List[np.ndarray] = []
         self.__stack_cursor: int = -1
 
+        self.__saved = True
         self.reloadFromDisk()
 
         self.__viewport = Viewport()
@@ -66,6 +72,8 @@ class Document:
 
         self.__stack.clear()
         self.__stack_cursor = -1
+        self.__saved = True
+        self.emitStateUpdated()
 
     def mapToViewport(self, pos: QtCore.QPoint):
         return (pos - self.__viewport.topLeft()) / self.__viewport.scale()
@@ -78,3 +86,37 @@ class Document:
         self.__stack = self.__stack[:self.__stack_cursor + 1]
         self.__stack.append(cv_img)
         self.__stack_cursor = len(self.__stack) - 1
+        self.__saved = False
+        self.emitStateUpdated()
+
+    def hasUndo(self):
+        return self.__stack_cursor >= 0
+
+    def hasRedo(self):
+        return self.__stack_cursor < len(self.__stack) - 1
+
+    def undo(self):
+        self.__stack_cursor = max(self.__stack_cursor - 1, -1)
+        self.__saved = False
+        self.emitStateUpdated()
+
+    def redo(self):
+        self.__stack_cursor = min(self.__stack_cursor + 1, len(self.__stack) - 1)
+        self.__saved = False
+        self.emitStateUpdated()
+
+    def setCallbacks(self, callbacks: EditorCallbacks):
+        self.__callbacks = callbacks
+
+    def emitStateUpdated(self):
+        if self.__callbacks is not None:
+            self.__callbacks.stateUpdated.emit()
+
+    def saved(self):
+        return self.__saved
+
+    def save(self):
+        self.__saved = True
+        image = cv2.cvtColor(self.image(), cv2.COLOR_RGBA2BGR)
+        self.__image.update(imutils.cv2_to_bytes(image))
+        self.emitStateUpdated()
