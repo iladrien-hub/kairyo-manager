@@ -30,13 +30,14 @@ class EditorWidget(QtWidgets.QFrame):
 
         self._toolBar.addSeparator()
 
-        self._resetScaleButton = self._toolBar.addButton(':/projectmanager/arrows-maximize.svg', 'Actual Size')
+        self._resetScaleButton = self._toolBar.addButton(':/projectmanager/arrows-maximize.svg', 'Actual Size (Ctrl+2)')
         self._resetScaleButton.clicked.connect(self.on_resetScaleButton_clicked)
+        self._resetScaleButton.setShortcut('Ctrl+2')
 
         self._fitIntoViewButton = self._toolBar.addButton(':/projectmanager/aspect-ratio.svg',
-                                                          'Fit Zoom to View (Ctrl+0)')
+                                                          'Fit Zoom to View (Ctrl+1)')
         self._fitIntoViewButton.clicked.connect(self.on_fitIntoViewButton_clicked)
-        self._fitIntoViewButton.setShortcut('Ctrl+0')
+        self._fitIntoViewButton.setShortcut('Ctrl+1')
 
         self._toolBar.addSeparator()
 
