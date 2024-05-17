@@ -8,7 +8,7 @@ from core.styling.icon import load_icon
 from core.widgets import TabWidget
 from core.widgets.splitter import Splitter
 from .history import ImageHistoryWidget
-from editor.imageeditor import ImageEditorWidget
+from ..editor.view.editor import EditorWidget
 from .imagelist import ProjectImageList
 
 
@@ -48,7 +48,7 @@ class ProjectManagerTab(QtWidgets.QWidget):
         self._history = ImageHistoryWidget(self)
         self._history.setObjectName('imageHistoryView')
 
-        self._editor = ImageEditorWidget()
+        self._editor = EditorWidget()
 
         self.setupUi()
         QMetaObject.connectSlotsByName(self)

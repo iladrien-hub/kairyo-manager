@@ -1,36 +1,34 @@
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
-from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5.QtCore import Qt
 
-from editor.model import ImageModel
+if TYPE_CHECKING:
+    from ..model.document import Document
+    from ..model.brush import Brush
 
 
-class BaseEditorTool:
+class EditorToolBase:
+    hasOverlay: bool = False
 
-    def __init__(self, model: ImageModel):
-        self.__model = model
-        self.__size: QtCore.QSize = QtCore.QSize()
+    def __init__(self, document: 'Document'):
+        self.doc: Optional['Document'] = document
+        self.brush: Optional['Brush'] = None
 
-    def model(self):
-        return self.__model
-
-    def size(self):
-        return self.__size
-
-    def setSize(self, s: QtCore.QSize):
-        self.__size = s
-
-    def clear(self):
+    def mousePressEvent(self, evt: Optional[QtGui.QMouseEvent]) -> None:
         pass
 
-    def mousePressEvent(self, pos: QtCore.QPoint):
+    def mouseMoveEvent(self, evt: Optional[QtGui.QMouseEvent]) -> None:
         pass
 
-    def mouseMoveEvent(self, pos: QtCore.QPoint):
+    def mouseReleaseEvent(self, evt: Optional[QtGui.QMouseEvent]) -> None:
         pass
 
-    def mouseReleaseEvent(self, pos: QtCore.QPoint):
+    def wheelEvent(self, evt: Optional[QtGui.QWheelEvent]) -> None:
         pass
 
-    def paintEvent(self):
+    def cursor(self):
+        return Qt.ArrowCursor
+
+    def overlay(self):
         pass
