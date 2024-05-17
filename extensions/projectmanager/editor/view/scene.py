@@ -278,3 +278,11 @@ class EditorScene(QtWidgets.QFrame):
         viewport.moveCenter(self.rect().center())
 
         self.update()
+
+    def resetScale(self):
+        viewport = self.__doc.viewport()
+        center = viewport.center()
+        viewport.setScale(1)
+        viewport.moveCenter(center)
+
+        self.update()
