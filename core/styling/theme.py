@@ -303,6 +303,26 @@ class DarkTheme(object):
                 'width': '8px',
                 'height': '8px',
             }),
+            Style('QRadioButton', {
+                'color': self.text_200
+            }),
+            Style('QRadioButton::indicator', {
+                'border': f'1px solid {self.surface_50}',
+                'border-radius': '6px',
+                'width': '12px',
+                'height': '12px',
+            }),
+            Style('QRadioButton::indicator:focus', {
+                'border': f'1px solid {self.accent_200}',
+            }),
+            Style('QRadioButton::indicator:checked', {
+                'background': 'qradialgradient('
+                              'cx: 0.5, cy: 0.5, '
+                              'fx: 0.5, fy: 0.5, '
+                              'radius: 1.0, '
+                              f'stop: 0.18 {self.text_200},'
+                              'stop: 0.23 transparent)'
+            }),
             Style('QCheckBox', {
                 'color': self.text_200
             }),
