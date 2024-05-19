@@ -1,9 +1,12 @@
-from PyQt5 import QtWidgets, QtGui
+import os
+
+from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QLabel
 
 from core.extension import KairyoExtension
+from core.project import Project
 from core.styling.icon import load_icon
+from .widgets.createproject import CreateProject
 from .widgets.projectamanagertab import ProjectManagerTab
 
 
@@ -34,12 +37,38 @@ class ProjectManagerExtension(KairyoExtension):
         self.api.storage.imageChanged.connect(self.on_storage_imageChanged)
 
     def on_create_project(self):
-        dialog = self.api.user_interface.create_dialog('Create Project', QLabel('u sure?'))
+        wid = CreateProject()
+
+        dialog = self.api.user_interface.create_dialog('Create Project', wid)
         dialog.setWindowModality(Qt.ApplicationModal)
         dialog.show()
+        dialog.exec_()
+
+        result = wid.result()
+        if not result:
+            return
+
+        os.makedirs(result.location, exist_ok=True)
+        root, name = os.path.split(result.location)
+
+        project = Project(result.location)
+        project.meta.name = name
+        project.meta.character = result.character
+        project.meta.description = result.description
+        project.meta.source = result.source
+        project.meta.source_type = result.source_type
+        project.meta.custom_source_type = result.custom_source_type
+        project.meta.use_custom_source_type = result.use_custom_source_type
+        project.meta.use_character_from_lora = result.use_character_from_lora
+
+        self.api.open_project(result.location)
 
     def on_open_project(self):
-        path = QtWidgets.QFileDialog.getExistingDirectory(self.api.user_interface.window, 'Select Folder')
+        root = ""
+        if last_project := self.api.settings.value('openProject/lastProject', None):
+            root = os.path.split(last_project)[0]
+
+        path = QtWidgets.QFileDialog.getExistingDirectory(self.api.user_interface.window, 'Select Folder', root)
         if path:
             self.api.open_project(path)
 

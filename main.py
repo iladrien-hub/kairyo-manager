@@ -131,7 +131,7 @@ def start_app():
 
     QtCore.qInstallMessageHandler(qtMessageHandler)
     app = QtWidgets.QApplication(sys.argv)
-    app.setStyle('fusion')
+    # app.setStyle('fusion')
     # app.setStyleSheet(make_stylesheet([Style('QLabel', {'color': 'white'})]))
 
     win = MainWindow()

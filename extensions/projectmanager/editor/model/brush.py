@@ -20,6 +20,6 @@ class Brush:
     def createStamp(self):
         stamp = np.zeros((self.__size, self.__size, 4), dtype=np.uint8)
         cv2.circle(stamp, (self.__size // 2, self.__size // 2), self.__size // 2, (255, 255, 255, 255), -1)
-        cv2.blur(stamp, (3, 3))
+        # cv2.blur(stamp, (3, 3))
 
         return stamp

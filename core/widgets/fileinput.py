@@ -22,12 +22,16 @@ class FileInput(QtWidgets.QLineEdit):
 
         self._mode = FileInputMode.Open
         self._filter = ""
+        self._root = ""
 
         self._action = self.addAction(self.__icon, QtWidgets.QLineEdit.TrailingPosition)
         self._action.triggered.connect(self.on_action_triggered)
         self._action.setToolTip('Browse... (Shift+Enter)')
 
         KeyboardManager.instance().ShiftEnter_Signal.connect(self._action.trigger)
+
+    def setRoot(self, r: str):
+        self._root = r
 
     def setMode(self, m: FileInputMode):
         self._mode = m
@@ -36,15 +40,15 @@ class FileInput(QtWidgets.QLineEdit):
         self._filter = f
 
     def openFileNameDialog(self):
-        fn, _ = QFileDialog.getOpenFileName(self, "Select File", "", self._filter)
+        fn, _ = QFileDialog.getOpenFileName(self, "Select File", self._root, self._filter)
         return fn
 
     def saveFileNameDialog(self):
-        fn, _ = QFileDialog.getSaveFileName(self, "Save", "", self._filter)
+        fn, _ = QFileDialog.getSaveFileName(self, "Save", self._root, self._filter)
         return fn
 
     def directoryNameDialog(self):
-        fn = QFileDialog.getExistingDirectory(self, "Select Directory")
+        fn = QFileDialog.getExistingDirectory(self, "Select Directory", self._root)
         return fn
 
     def on_action_triggered(self):

@@ -14,6 +14,16 @@ from core.util.params import parse_generation_parameters
 class ProjectMeta(NamedFileDict):
     name: str = field(default="")
 
+    character: str = field(default="")
+    use_character_from_lora: bool = field(default=False)
+
+    use_custom_source_type: bool = field(default=False)
+    source_type: str = field(default="")
+    custom_source_type: str = field(default=False)
+    source: str = field(default=False)
+
+    description: str = field(default="")
+
 
 class Project:
 
