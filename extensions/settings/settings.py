@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import Qt
 
 from core.extension import KairyoExtension
 from .widgets.settingswidget import SettingsWidget
@@ -20,6 +21,7 @@ class SettingsExtension(KairyoExtension):
         widget.populateTree(self.api.user_interface.settings)
 
         dialog = self.api.user_interface.create_dialog('Settings', widget)
+        dialog.setWindowModality(Qt.ApplicationModal)
         dialog.show()
 
         widget.updateUi()

@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QLabel
 
 from core.extension import KairyoExtension
@@ -34,6 +35,7 @@ class ProjectManagerExtension(KairyoExtension):
 
     def on_create_project(self):
         dialog = self.api.user_interface.create_dialog('Create Project', QLabel('u sure?'))
+        dialog.setWindowModality(Qt.ApplicationModal)
         dialog.show()
 
     def on_open_project(self):
