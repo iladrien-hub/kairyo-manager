@@ -85,8 +85,11 @@ class EditorWidget(QtWidgets.QFrame):
         return self._scene
 
     def setImage(self, image: ProjectImage):
-        self._document = Document.from_image(image)
-        self._document.setCallbacks(self._callbacks)
+        if image is not None:
+            self._document = Document.from_image(image)
+            self._document.setCallbacks(self._callbacks)
+        else:
+            self._document = None
         self._scene.setDocument(self._document)
         self._scene.fitIntoView()
         self.updateButtons()

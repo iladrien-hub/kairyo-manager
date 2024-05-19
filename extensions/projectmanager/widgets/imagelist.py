@@ -283,9 +283,27 @@ class ProjectImageList(QtWidgets.QWidget):
         try:
             project = KairyoApi.instance().storage.project
 
-            for im_name in project.images():
-                image = project.get_image(im_name)
-                self.__loader.schedule(image)
+            images = [project.get_image(i) for i in project.images()]
+
+            items_to_remove = []
+            existing_images = []
+
+            for row in range(self._list.count()):
+                item = self._list.item(row)
+                if not isinstance(item, ImageListItem):
+                    continue
+
+                if item.image not in images:
+                    items_to_remove.append(item)
+                else:
+                    existing_images.append(item.image)
+
+            for item in items_to_remove:
+                self._list.takeItem(self._list.row(item))
+
+            for image in images:
+                if image not in existing_images:
+                    self.__loader.schedule(image)
 
             self._list.sortItems()
         except BaseException as e:
