@@ -110,14 +110,6 @@ class FramelessWindow(FramelessWindowBase):
         else:
             QtWin.extendFrameIntoClientArea(self, 0, 0, 0, 0)
 
-    def setResizingEnabled(self, value: bool):
-        """Enable window resizing
-
-        Args:
-            value (bool): Enable or disable window resizing
-        """
-        self.__resizingEnabled = value
-
     def setEdgeSnapping(self, value: bool):
         """Enable or disable edge snapping for window.
 
@@ -175,6 +167,7 @@ class FramelessWindow(FramelessWindowBase):
                         return retval, result
 
                     if self.isResizingEnabled():
+                        print('asd')
                         if lx and ty:
                             return True, win32con.HTTOPLEFT
                         if rx and by:
