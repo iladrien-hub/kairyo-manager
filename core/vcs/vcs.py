@@ -110,7 +110,7 @@ class Repository:
         self._snapshots[snapshot_hash] = snapshot_data
 
     def load_snapshot(self, snapshot_hash: str):
-        if self.meta.current == snapshot_hash:
+        if self.meta.current == snapshot_hash and not self.has_unsaved():
             logging.warning(f"currently at '{snapshot_hash}'")
             return
 

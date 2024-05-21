@@ -11,6 +11,7 @@ from pygments import highlight, lexers, formatters
 from core.api import KairyoApi
 from core.project import ProjectImage
 from core.widgets.layout import create_box_layout
+from core.widgets.question import Question
 from core.widgets.toolbar import ToolBar
 from .snapshotdialog import SnapshotDialog
 
@@ -197,6 +198,28 @@ class ImageHistoryWidget(QtWidgets.QFrame):
         if not self._image:
             return
 
+        if self._image.vcs.has_unsaved():
+            question = Question(
+                '<b>Local changes will be lost!</b>\nWould you like to save them first?',
+                buttons=Question.Buttons.YES | Question.Buttons.NO | Question.Buttons.CANCEL
+            )
+
+            window = KairyoApi.instance().user_interface.create_dialog('Overwrite changes', question)
+            window.setWindowModality(Qt.ApplicationModal)
+            window.setResizingEnabled(False)
+            window.setFixedSize(window.minimumSizeHint())
+
+            window.show()
+            window.exec_()
+
+            match question.result():
+                case Question.Buttons.YES:
+                    self.on_saveSnapshot_clicked()
+                case Question.Buttons.NO:
+                    pass  # proceed
+                case Question.Buttons.CANCEL:
+                    return
+
         self._image.vcs.load_snapshot(snapshot_hash)
         self.syncList()
         self.updateButtons()
@@ -221,4 +244,3 @@ class ImageHistoryWidget(QtWidgets.QFrame):
 
         self.syncList()
         self.updateButtons()
-
