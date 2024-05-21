@@ -39,6 +39,30 @@ class Repository:
 
     # ---------------------- Public Methods ----------------------
 
+    def has_unsaved(self):
+        snapshot_data = {
+            'tree': {},
+        }
+
+        for root, _, files in os.walk(self._path):
+            if self._VCS_DIRNAME in root:
+                continue
+
+            for basename in files:
+                fn = os.path.join(root, basename)
+
+                with open(fn, 'rb') as f:
+                    data = f.read()
+
+                file_id = hashlib.sha256(data).hexdigest()
+                snapshot_data['tree'][fn] = file_id
+
+        if self.meta.current:
+            current = self._snapshots[self.meta.current]
+            return set(current['tree'].items()) != set(snapshot_data['tree'].items())
+
+        return True
+
     def save_snapshot(self, description: str = ""):
         snapshot_hash = hashlib.sha256()
         snapshot_data = {

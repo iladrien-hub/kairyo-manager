@@ -87,6 +87,9 @@ class ProjectManagerTab(QtWidgets.QWidget):
         KairyoApi.instance().storage.imageChanged.connect(
             lambda: self._history.setImage(KairyoApi.instance().storage.image)
         )
+        KairyoApi.instance().watchdog.fileChanged.connect(self._history.syncList)
+        KairyoApi.instance().watchdog.fileChanged.connect(self._history.updateButtons)
+
         self._bottomTabs.setTabIcon(
             self._bottomTabs.addTab(self._history, "History"),
             load_icon(":/projectmanager/code-branch.svg", "#cacaca")

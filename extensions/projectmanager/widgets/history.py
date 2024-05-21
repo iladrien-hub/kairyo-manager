@@ -165,7 +165,7 @@ class ImageHistoryWidget(QtWidgets.QFrame):
             logging.error("", exc_info=e)
 
     def updateButtons(self):
-        self._commitButton.setEnabled(self._image is not None)
+        self._commitButton.setEnabled(self._image is not None and self._image.vcs.has_unsaved())
 
     def setImage(self, v: Optional[ProjectImage]):
         if self._image != v:
