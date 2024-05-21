@@ -26,6 +26,7 @@ class ProjectImage:
         self._parent = parent
 
         self._full_path = os.path.join(self._parent.images_dir, self._name)
+        self._image_path = os.path.join(self._full_path, "image.png")
 
         os.makedirs(self._full_path, exist_ok=True)
 
@@ -39,7 +40,7 @@ class ProjectImage:
         shutil.rmtree(self._full_path)
 
     def update(self, content: bytes):
-        with open(os.path.join(self._full_path, "image.png"), 'wb') as f:
+        with open(self._image_path, 'wb') as f:
             f.write(content)
 
     def save_snapshot(self, description: str = ""):
@@ -104,3 +105,7 @@ class ProjectImage:
         self._params = params
         with open(os.path.join(self._full_path, 'params.json'), 'w', encoding='utf-8') as f:
             ujson.dump(self._params, f)
+
+    @property
+    def mtime(self):
+        return os.path.getmtime(self._image_path)

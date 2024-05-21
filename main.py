@@ -167,7 +167,10 @@ def start_app():
     app.focusChanged.connect(on_focus_changed)
     api.open_last_project()
 
-    with api.worker:
+    with (
+        api.worker,
+        api.watchdog
+    ):
         app.exec_()
 
 

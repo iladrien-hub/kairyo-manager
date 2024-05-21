@@ -35,6 +35,7 @@ class ProjectManagerExtension(KairyoExtension):
         open_project.setIcon(load_icon(':projectmanager/folder-open.svg', self.api.theme.text_200))
 
         self.api.storage.imageChanged.connect(self.on_storage_imageChanged)
+        self.api.watchdog.fileChanged.connect(self.on_watchdog_fileChanged)
 
     def on_create_project(self):
         wid = CreateProject()
@@ -74,3 +75,6 @@ class ProjectManagerExtension(KairyoExtension):
 
     def on_storage_imageChanged(self):
         self._main_tab.editor().setImage(self.api.storage.image)
+
+    def on_watchdog_fileChanged(self, name: str):
+        self._main_tab.editor().reloadFromDisk(self.api.storage.project.get_image(name))

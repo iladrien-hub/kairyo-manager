@@ -94,6 +94,10 @@ class EditorWidget(QtWidgets.QFrame):
         self._scene.fitIntoView()
         self.updateButtons()
 
+    def reloadFromDisk(self, image: ProjectImage):
+        Document.from_image(image).reloadFromDisk()
+        self._scene.fitIntoView()
+
     def on_fitIntoViewButton_clicked(self):
         self._scene.fitIntoView()
 

@@ -5,6 +5,7 @@ import typing
 from PyQt5.QtCore import QSettings, QObject, pyqtSignal
 
 from .project import Project
+from .watchdog import Watchdog
 from .worker import Worker
 
 if typing.TYPE_CHECKING:
@@ -33,6 +34,7 @@ class KairyoApi(QObject):
         self.__settings: QSettings = QSettings('config.ini', QSettings.IniFormat)
         self.__theme: 'DarkTheme' = theme
         self.__worker: Worker = Worker()
+        self.__watchdog: Watchdog = Watchdog(self)
 
     def register_extension(self, ext: 'KairyoExtension'):
         self.__extensions.append(ext)
@@ -83,3 +85,7 @@ class KairyoApi(QObject):
     @property
     def worker(self):
         return self.__worker
+
+    @property
+    def watchdog(self):
+        return self.__watchdog

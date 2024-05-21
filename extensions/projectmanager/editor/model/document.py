@@ -29,14 +29,15 @@ class Document:
         self.__stack_cursor: int = -1
 
         self.__saved = True
-        self.reloadFromDisk()
 
         self.__viewport = Viewport()
-        self.__viewport.setSize(self.size())
-        self.__viewport.setPixmapSize(self.size())
-        self.__viewport.setScale(1)
+        # self.__viewport.setSize(self.size())
+        # self.__viewport.setPixmapSize(self.size())
+        # self.__viewport.setScale(1)
 
         self.__tool: Optional[EditorToolBase] = None
+        self.reloadFromDisk()
+
 
     @classmethod
     def from_image(cls, image: ProjectImage):
@@ -73,6 +74,15 @@ class Document:
         self.__stack.clear()
         self.__stack_cursor = -1
         self.__saved = True
+
+        center = self.__viewport.center()
+        self.__viewport.setSize(self.size())
+        self.__viewport.setPixmapSize(self.size())
+        self.__viewport.setScale(1)
+        self.__viewport.moveCenter(center)
+
+        self.switchTool(None)
+
         self.emitStateUpdated()
 
     def mapToViewport(self, pos: QtCore.QPoint):
