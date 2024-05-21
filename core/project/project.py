@@ -64,8 +64,15 @@ class Project:
 
         image.update(content=data)
         image.save_snapshot(description="initial")
+        self._images[name] = image
 
         return image
+
+    def remove_image(self, name: str):
+        if name in self._images:
+            image = ProjectImage(self, name)
+            image.delete()
+            del self._images[name]
 
     def get_image(self, name: str):
         return self._images[name]

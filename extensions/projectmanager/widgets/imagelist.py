@@ -1,10 +1,11 @@
 import logging
 import queue
 from enum import Enum
+from functools import partial
 from typing import List, Optional
 
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, Qt
 
 from core.api import KairyoApi
 from core.project import ProjectImage
@@ -241,6 +242,8 @@ class ProjectImageList(QtWidgets.QWidget):
         self._list.setFlow(QtWidgets.QListView.LeftToRight)
         self._list.setSizeAdjustPolicy(QtWidgets.QListWidget.AdjustToContents)
         self._list.setMovement(QtWidgets.QListView.Movement.Static)
+        self._list.setContextMenuPolicy(Qt.CustomContextMenu)
+        self._list.customContextMenuRequested.connect(self.on_customContextMenu_requested)
         self._list.setSortingEnabled(True)
 
         self._bar = ImageListToolbar(self, self._list)
@@ -317,3 +320,16 @@ class ProjectImageList(QtWidgets.QWidget):
     def on_projectImageList_currentItemChanged(self):
         item = self._list.currentItem()
         KairyoApi.instance().storage.image = item.image if item else None
+
+    def on_customContextMenu_requested(self, point):
+        item: ImageListItem = self._list.itemAt(point)  # noqa
+        gpos = self._list.mapToGlobal(point)
+
+        menu = QtWidgets.QMenu(self)
+        delete = menu.addAction('Delete')
+        delete.triggered.connect(partial(self.on_delete_triggered, item.image))
+
+        menu.exec(gpos)
+
+    def on_delete_triggered(self, image: ProjectImage):
+        KairyoApi.instance().remove_image(image.name)

@@ -1,4 +1,5 @@
 import os.path
+import shutil
 from typing import TYPE_CHECKING
 
 import ujson
@@ -33,6 +34,9 @@ class ProjectImage:
         self._params = None
 
     # ---------------------- Public Methods ----------------------
+
+    def delete(self):
+        shutil.rmtree(self._full_path)
 
     def update(self, content: bytes):
         with open(os.path.join(self._full_path, "image.png"), 'wb') as f:

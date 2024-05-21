@@ -1,4 +1,7 @@
-from PyQt5 import QtWidgets
+import os.path
+import typing
+
+from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtCore import Qt, QMetaObject, QSettings
 from PyQt5.QtWidgets import QLabel, QSizePolicy
 
@@ -118,6 +121,7 @@ class ProjectManagerTab(QtWidgets.QWidget):
 
         self.setLayout(layout)
         self.loadState()
+        self.setAcceptDrops(True)
 
     def loadState(self):
         left_tab = int(self._settings.value('projectmanager/leftTabs_last', 0, int))
@@ -176,3 +180,22 @@ class ProjectManagerTab(QtWidgets.QWidget):
             self._bottomSplitter.setSizes([self._bottomSplitter.height(), 22])
             self._bottomSplitter.handle(1).setEnabled(False)
         self._settings.setValue('projectmanager/bottomTabs_last', idx)
+
+    # Drops
+
+    def dragMoveEvent(self, a0: typing.Optional[QtGui.QDragMoveEvent]) -> None:
+        a0.acceptProposedAction()
+
+    def dragEnterEvent(self, a0: typing.Optional[QtGui.QDragEnterEvent]) -> None:
+        a0.accept()
+
+    def dropEvent(self, a0: typing.Optional[QtGui.QDropEvent]) -> None:
+        for url in a0.mimeData().urls():
+            if url.isLocalFile():
+                fn = url.toLocalFile()
+                name = os.path.splitext(os.path.basename(fn))[0]
+
+                with open(fn, 'rb') as f:
+                    KairyoApi.instance().add_image(name, f.read())
+            else:
+                print(url.url())

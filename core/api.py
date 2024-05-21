@@ -42,6 +42,14 @@ class KairyoApi:
         if fn and os.path.isdir(fn):
             self.open_project(fn)
 
+    def add_image(self, name: str, data: bytes, params: dict = None):
+        if self.__storage.project:
+            self.__storage.project.add_image(name, data, params)
+
+    def remove_image(self, name: str):
+        if self.__storage.project:
+            self.__storage.project.remove_image(name)
+
     @classmethod
     def instance(cls) -> 'KairyoApi':
         return cls.__instance
