@@ -167,7 +167,6 @@ class FramelessWindow(FramelessWindowBase):
                         return retval, result
 
                     if self.isResizingEnabled():
-                        print('asd')
                         if lx and ty:
                             return True, win32con.HTTOPLEFT
                         if rx and by:
