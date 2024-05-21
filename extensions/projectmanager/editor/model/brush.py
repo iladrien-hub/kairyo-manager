@@ -5,6 +5,7 @@ import numpy as np
 class Brush:
     def __init__(self):
         self.__size = 20
+        self.__hardness = 0.5
         self.__stamp = self.createStamp()
 
     def size(self):
@@ -18,8 +19,23 @@ class Brush:
         return self.__stamp
 
     def createStamp(self):
-        stamp = np.zeros((self.__size, self.__size, 4), dtype=np.uint8)
-        cv2.circle(stamp, (self.__size // 2, self.__size // 2), self.__size // 2, (255, 255, 255, 255), -1)
-        # cv2.blur(stamp, (3, 3))
+        diameter = self.__size
+        radius = cx = cy = diameter // 2
 
-        return stamp
+        x, y = np.meshgrid(np.arange(diameter), np.arange(diameter))
+        img = np.sqrt((x - cx) ** 2 + (y - cy) ** 2)
+
+        img[img > radius] = radius
+        img[img < radius * self.__hardness] = 0
+
+        mask = img > radius * self.__hardness
+
+        img /= np.max(img)
+        img = 1 - img
+
+        if np.any(mask):
+            img[mask] /= np.max(img[mask])
+
+        img = (img * 255).astype(np.uint8).reshape((diameter, diameter, 1))
+
+        return cv2.cvtColor(img.reshape((diameter, diameter, 1)), cv2.COLOR_GRAY2RGBA)
