@@ -6,10 +6,13 @@ from typing import Optional
 
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import Qt
-
-from core.project import ProjectImage
-
 from pygments import highlight, lexers, formatters
+
+from core.api import KairyoApi
+from core.project import ProjectImage
+from core.widgets.layout import create_box_layout
+from core.widgets.toolbar import ToolBar
+from .snapshotdialog import SnapshotDialog
 
 
 class PreviewGraphicsWidget(QtWidgets.QGraphicsView):
@@ -52,10 +55,6 @@ class ImageHistoryWidget(QtWidgets.QFrame):
     def __init__(self, parent):
         super().__init__(parent)
 
-        self._layout = QtWidgets.QHBoxLayout()
-        self._layout.setSpacing(0)
-        self._layout.setContentsMargins(0, 0, 0, 0)
-
         self._commitsList = QtWidgets.QListWidget(self)
         self._commitsList.setObjectName('commitsList')
         self._commitsList.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -77,12 +76,21 @@ class ImageHistoryWidget(QtWidgets.QFrame):
 
         self._image: Optional[ProjectImage] = None
 
-        self._layout.addWidget(self._infoBox)
-        self._layout.addWidget(self._commitsList)
-        self._layout.addWidget(self._previewWidget)
-        self.setLayout(self._layout)
+        self._toolBar = ToolBar()
+        self._commitButton = self._toolBar.addButton(":/projectmanager/code-commit.svg", "New Snapshot")
+        self._commitButton.clicked.connect(self.on_saveSnapshot_clicked)
+
+        self.setLayout(create_box_layout([
+            self._toolBar,
+            create_box_layout([
+                self._infoBox,
+                self._commitsList,
+                self._previewWidget
+            ], proto=QtWidgets.QHBoxLayout)
+        ]))
 
         QtCore.QMetaObject.connectSlotsByName(self)
+        self.updateButtons()
 
     def syncList(self):
         self._commitsList.clear()
@@ -156,10 +164,14 @@ class ImageHistoryWidget(QtWidgets.QFrame):
         except BaseException as e:
             logging.error("", exc_info=e)
 
+    def updateButtons(self):
+        self._commitButton.setEnabled(self._image is not None)
+
     def setImage(self, v: Optional[ProjectImage]):
         if self._image != v:
             self._image = v
             self.syncList()
+            self.updateButtons()
 
     def resizeEvent(self, a0):
         self._previewWidget.fitInView(self._previewPixmapItem, Qt.KeepAspectRatio)
@@ -187,3 +199,26 @@ class ImageHistoryWidget(QtWidgets.QFrame):
 
         self._image.vcs.load_snapshot(snapshot_hash)
         self.syncList()
+        self.updateButtons()
+
+    def on_saveSnapshot_clicked(self):
+        dialog = SnapshotDialog()
+
+        window = KairyoApi.instance().user_interface.create_dialog('New Snapshot', dialog)
+        window.setWindowModality(Qt.ApplicationModal)
+        window.setResizingEnabled(False)
+        window.setFixedSize(424, 128)
+
+        window.show()
+        window.exec_()
+
+        result = dialog.result()
+
+        if not result:
+            return
+
+        self._image.save_snapshot(result)
+
+        self.syncList()
+        self.updateButtons()
+
