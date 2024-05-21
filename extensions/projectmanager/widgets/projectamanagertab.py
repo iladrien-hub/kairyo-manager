@@ -8,6 +8,7 @@ from core.styling.icon import load_icon
 from core.widgets import TabWidget
 from core.widgets.splitter import Splitter
 from .history import ImageHistoryWidget
+from .infowidget import InfoWidget
 from ..editor.view.editor import EditorWidget
 from .imagelist import ProjectImageList
 
@@ -45,6 +46,9 @@ class ProjectManagerTab(QtWidgets.QWidget):
         self._imageList = ProjectImageList(self)
         self._imageList.setObjectName('projectImageList')
 
+        self._info = InfoWidget(self)
+        self._info.setObjectName('projectInfo')
+
         self._history = ImageHistoryWidget(self)
         self._history.setObjectName('imageHistoryView')
 
@@ -63,10 +67,9 @@ class ProjectManagerTab(QtWidgets.QWidget):
             load_icon(":/projectmanager/folder.svg", "#cacaca")
         )
 
-        q_label = QLabel("Project and image information...")
-        q_label.setStyleSheet(self._LEFT_TAB_STYLE)
+        KairyoApi.instance().storage.projectChanged.connect(self._info.sync)
         self._leftTabs.setTabIcon(
-            self._leftTabs.addTab(q_label, "Info"),
+            self._leftTabs.addTab(self._info, "Info"),
             load_icon(":/projectmanager/memo-circle-info.svg", "#cacaca")
         )
 

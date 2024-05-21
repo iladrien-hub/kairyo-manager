@@ -9,7 +9,7 @@ from core.styling.icon import load_icon
 from core.widgets.fileinput import FileInput, FileInputMode
 from core.widgets.forms import LabeledDivider
 from core.widgets.layout import create_box_layout, layout_to_widget
-from .projectinfo import ProjectInfo
+from .projectinfofrom import ProjectInfoFrom
 
 
 @dataclasses.dataclass
@@ -38,7 +38,7 @@ class CreateProject(QtWidgets.QWidget):
         self._location.setMode(FileInputMode.Directory)
         self._location.textChanged.connect(self.checkForErrors)
 
-        self._info = ProjectInfo()
+        self._info = ProjectInfoFrom()
 
         self._createButton = QtWidgets.QPushButton('Create')
         self._createButton.setProperty('accent', True)

@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QSizePolicy
 from core.widgets.layout import create_box_layout, create_grid_layout
 
 
-class ProjectInfo(QtWidgets.QFrame):
+class ProjectInfoFrom(QtWidgets.QFrame):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -92,3 +92,29 @@ class ProjectInfo(QtWidgets.QFrame):
 
     def useCharacterFromLora(self):
         return self._loadCharacterFromLora.isChecked()
+
+    def setCharacter(self, character_name):
+        self._characterName.setText(character_name)
+
+    def setDescription(self, description_text):
+        self._description.setPlainText(description_text)
+
+    def setSource(self, source_name):
+        self._sourceName.setText(source_name)
+
+    def setSourceType(self, source_type):
+        index = self._sourceType.findText(source_type)
+        if index != -1:
+            self._sourceType.setCurrentIndex(index)
+
+    def setCustomSourceType(self, custom_source_type):
+        self._sourceTypeCustom.setText(custom_source_type)
+
+    def setUseCustomSourceType(self, use_custom):
+        self._sourceTypeRadio_custom.setChecked(use_custom)
+        self._sourceTypeRadio_default.setChecked(not use_custom)
+        self.updateFranchiseControls()
+
+    def setUseCharacterFromLora(self, use_lora):
+        self._loadCharacterFromLora.setChecked(use_lora)
+        self.updateCharacterNameInput()

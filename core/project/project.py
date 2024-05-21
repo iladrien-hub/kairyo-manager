@@ -13,14 +13,15 @@ from core.util.params import parse_generation_parameters
 
 class ProjectMeta(NamedFileDict):
     name: str = field(default="")
+    time_created: float = field(default=0)
 
     character: str = field(default="")
     use_character_from_lora: bool = field(default=False)
 
     use_custom_source_type: bool = field(default=False)
     source_type: str = field(default="")
-    custom_source_type: str = field(default=False)
-    source: str = field(default=False)
+    custom_source_type: str = field(default="")
+    source: str = field(default="")
 
     description: str = field(default="")
 
@@ -39,6 +40,8 @@ class Project:
             self._images[dir_name] = ProjectImage(self, dir_name)
 
         self._meta = ProjectMeta(os.path.join(self._root_dir, 'project.meta.json'))
+        if self._meta.time_created == 0:
+            self._meta.time_created = time.time()
 
     def create_image(self, name: str):
         if name in self._images:

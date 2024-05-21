@@ -417,6 +417,10 @@ class DarkTheme(object):
                 'border-left': f'1px solid {self.surface_50}',
                 'border-top': f'1px solid {self.surface_50}',
             }),
+            Style('QFrame#projectInfo', {
+                'border-right': f'1px solid {self.surface_50}',
+                'padding-right': '1px'
+            }),
             Style('QFrame#imageListFooter', {
                 'border-right': f'1px solid {self.surface_50}',
                 'border-top': f'1px solid {self.surface_50}',
