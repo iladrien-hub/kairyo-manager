@@ -15,6 +15,12 @@ class Brush:
         self.__size = max(size, 1)
         self.__stamp = self.createStamp()
 
+    def hardness(self):
+        return self.__hardness
+
+    def setHardness(self, hardness: float):
+        self.__hardness = min(max(hardness, 0), 1)
+
     def stamp(self):
         return self.__stamp
 
@@ -36,6 +42,7 @@ class Brush:
         if np.any(mask):
             img[mask] /= np.max(img[mask])
 
-        img = (img * 255).astype(np.uint8).reshape((diameter, diameter, 1))
+        img = (img * 255).astype(np.uint8)
+        img = np.stack([img, img, img, img], axis=-1)
 
-        return cv2.cvtColor(img.reshape((diameter, diameter, 1)), cv2.COLOR_GRAY2RGBA)
+        return img

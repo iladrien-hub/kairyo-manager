@@ -87,6 +87,7 @@ class BrushResizeTool(EditorSceneTool):
         self.__anchor: QtCore.QPoint = QtCore.QPoint()
         self.__brush: Optional[Brush] = None
         self.__originSize: int = 0
+        self.__originHardness: float = 0
 
     def mousePressEvent(self, evt: Optional[QtGui.QMouseEvent]) -> None:
         if not self.doc:
@@ -94,6 +95,7 @@ class BrushResizeTool(EditorSceneTool):
         if evt.button() == Qt.RightButton and self.doc.currentBrush():
             self.__brush = self.doc.currentBrush()
             self.__originSize = self.__brush.size()
+            self.__originHardness = self.__brush.hardness()
             self.__isResizing = True
             self.__anchor = evt.pos()
 
@@ -101,6 +103,7 @@ class BrushResizeTool(EditorSceneTool):
         if self.__isResizing:
             delta = (evt.pos() - self.__anchor) / self.doc.viewport().scale()
             self.__brush.setSize(self.__originSize + delta.x() * 2)
+            self.__brush.setHardness(self.__originHardness + delta.y() / 100)
 
     def mouseReleaseEvent(self, evt: Optional[QtGui.QMouseEvent]) -> None:
         if evt.button() == Qt.RightButton:
