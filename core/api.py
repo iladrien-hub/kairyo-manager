@@ -2,7 +2,7 @@ import logging
 import os
 import typing
 
-from PyQt5.QtCore import QSettings
+from PyQt5.QtCore import QSettings, QObject, pyqtSignal
 
 from .project import Project
 from .worker import Worker
@@ -15,10 +15,14 @@ if typing.TYPE_CHECKING:
 from .storage import KairyoStorage
 
 
-class KairyoApi:
+class KairyoApi(QObject):
+    imageListChanged = pyqtSignal()
+
     __instance = None
 
     def __init__(self, *, user_interface: 'UserInterface', theme: 'DarkTheme'):
+        super().__init__()
+
         if KairyoApi.__instance:
             raise RuntimeError(f"only one instance of {self.__class__.__name__} can be created")
         KairyoApi.__instance = self
@@ -45,10 +49,12 @@ class KairyoApi:
     def add_image(self, name: str, data: bytes, params: dict = None):
         if self.__storage.project:
             self.__storage.project.add_image(name, data, params)
+            self.imageListChanged.emit()
 
     def remove_image(self, name: str):
         if self.__storage.project:
             self.__storage.project.remove_image(name)
+            self.imageListChanged.emit()
 
     @classmethod
     def instance(cls) -> 'KairyoApi':

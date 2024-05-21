@@ -65,6 +65,7 @@ class ProjectManagerTab(QtWidgets.QWidget):
         self._bottomTabs.setTabPosition(QtWidgets.QTabWidget.TabPosition.South)
 
         KairyoApi.instance().storage.projectChanged.connect(self._imageList.sync)
+        KairyoApi.instance().imageListChanged.connect(self._imageList.sync)
         self._leftTabs.setTabIcon(
             self._leftTabs.addTab(self._imageList, "Files"),
             load_icon(":/projectmanager/folder.svg", "#cacaca")
