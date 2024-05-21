@@ -29,6 +29,7 @@ class Document:
         self.__stack_cursor: int = -1
 
         self.__saved = True
+        self.__just_saved = False
 
         self.__viewport = Viewport()
         # self.__viewport.setSize(self.size())
@@ -37,7 +38,6 @@ class Document:
 
         self.__tool: Optional[EditorToolBase] = None
         self.reloadFromDisk()
-
 
     @classmethod
     def from_image(cls, image: ProjectImage):
@@ -67,23 +67,35 @@ class Document:
         return self.__tool
 
     def reloadFromDisk(self):
+        if self.__just_saved:
+            self.__just_saved = False
+            return False
+
+        old_original = self.__original
+
         arr = np.frombuffer(self.__image.read_version(), np.uint8)
-        self.__original = cv2.imdecode(arr, cv2.IMREAD_COLOR)
-        self.__original = cv2.cvtColor(self.__original, cv2.COLOR_BGR2RGBA)
+        original = cv2.imdecode(arr, cv2.IMREAD_COLOR)
+        original = cv2.cvtColor(original, cv2.COLOR_BGR2RGBA)
 
-        self.__stack.clear()
-        self.__stack_cursor = -1
-        self.__saved = True
+        if old_original is None or old_original.shape[:2] != original.shape[:2]:
+            self.__stack.clear()
+            self.__stack_cursor = -1
+            self.__saved = True
 
-        center = self.__viewport.center()
-        self.__viewport.setSize(self.size())
-        self.__viewport.setPixmapSize(self.size())
-        self.__viewport.setScale(1)
-        self.__viewport.moveCenter(center)
+            center = self.__viewport.center()
 
-        self.switchTool(None)
+            self.__original = original
+            self.__viewport.setSize(self.size())
+            self.__viewport.setPixmapSize(self.size())
+            self.__viewport.setScale(1)
+            self.__viewport.moveCenter(center)
 
-        self.emitStateUpdated()
+            self.switchTool(None)
+            return True
+
+        else:
+            self.saveToStack(original)
+            return False
 
     def mapToViewport(self, pos: QtCore.QPoint):
         return (pos - self.__viewport.topLeft()) / self.__viewport.scale()
@@ -128,5 +140,6 @@ class Document:
     def save(self):
         self.__saved = True
         image = cv2.cvtColor(self.image(), cv2.COLOR_RGBA2BGR)
+        self.__just_saved = True
         self.__image.update(imutils.cv2_to_bytes(image))
         self.emitStateUpdated()
