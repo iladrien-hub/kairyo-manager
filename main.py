@@ -13,6 +13,7 @@ from PyQt5.QtCore import QSize, QPoint
 
 from core.api import KairyoApi
 from core.extension import KairyoExtension
+from core.style import KairyoStyle
 from core.styling.theme import DarkTheme
 from core.user_interface import UserInterface
 
@@ -131,7 +132,7 @@ def start_app():
 
     QtCore.qInstallMessageHandler(qtMessageHandler)
     app = QtWidgets.QApplication(sys.argv)
-    # app.setStyle('fusion')
+    app.setStyle(KairyoStyle())
     # app.setStyleSheet(make_stylesheet([Style('QLabel', {'color': 'white'})]))
 
     win = MainWindow()
