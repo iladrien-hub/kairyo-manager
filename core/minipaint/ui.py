@@ -191,6 +191,7 @@ class CanvasWidget(QtWidgets.QFrame):
         elif bool(a0.buttons() & Qt.LeftButton) and self.__keyPressed[Qt.Key_Space]:
             delta = pos - self.__lastMousePosition
             editor.viewport().pan(delta.x(), delta.y())
+            self.__keepFit = False
         elif bool(a0.buttons() & Qt.RightButton) and self.__keyPressed[Qt.Key_Alt]:
             if brush := editor.activeBrush():
                 delta = pos.x() - self.__lastMousePosition.x()
@@ -239,6 +240,8 @@ class CanvasWidget(QtWidgets.QFrame):
                 delta //= abs(delta)
             editor.viewport().pan(10 * delta, 0)
 
+            self.__keepFit = False
+
         elif self.__keyPressed[Qt.Key_Alt]:  # zoom
             steps = a0.angleDelta().x()
             if steps != 0:
@@ -247,11 +250,15 @@ class CanvasWidget(QtWidgets.QFrame):
             scale = editor.viewport().scale()
             editor.viewport().setScale(scale + 0.1 * steps, anchor=a0.pos())
 
+            self.__keepFit = False
+
         else:  # vertical pan
             delta = a0.angleDelta().y()
             if delta != 0:
                 delta //= abs(delta)
             editor.viewport().pan(0, 10 * delta)
+
+            self.__keepFit = False
 
 
 class ImageEditorWidget(QtWidgets.QWidget, ImageEditorCallbacks):
