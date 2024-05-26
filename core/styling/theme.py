@@ -453,7 +453,7 @@ class DarkTheme(object):
                 'background': self.surface_200,
                 'font-size': '14px'
             }),
-            Style('EditorScene', {
+            Style('EditorWidget CanvasWidget', {
                 'border-top': f'1px solid {self.surface_50}',
                 'background': self.surface_100,
             }),
