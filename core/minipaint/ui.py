@@ -294,8 +294,10 @@ class ImageEditorWidget(QtWidgets.QWidget, ImageEditorCallbacks):
 
     def setActiveEditor(self, editor: Optional[ImageEditor]):
         self.__activeEditor = editor
-        self.__canvas.fitIntoView()
         self.__canvas.updateCursor()
+
+    def fitIntoView(self):
+        self.__canvas.fitIntoView()
 
     def renderCanvas(self):
         self.__canvas.update()
