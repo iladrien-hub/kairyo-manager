@@ -50,3 +50,9 @@ class Viewport(QtCore.QRect):
             new_pos = anchor + vector * self.__scale / old_scale
 
             self.moveCenter(new_pos)
+
+    def normalizePoint(self, p: QtCore.QPoint):
+        return (p - self.topLeft()) / self.__scale
+
+    def pan(self, dx, dy):
+        self.moveCenter(self.center() + QtCore.QPoint(dx, dy))
