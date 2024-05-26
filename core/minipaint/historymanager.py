@@ -1,9 +1,5 @@
 from abc import ABC, abstractmethod
 
-import numpy as np
-
-from core.minipaint.layers.base import BaseLayer
-
 
 class HistoryItem(ABC):
 

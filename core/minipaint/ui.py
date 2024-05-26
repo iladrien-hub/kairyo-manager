@@ -1,16 +1,12 @@
 import logging
 import time
-from typing import Dict, Optional
+from typing import Optional
 
-import cv2
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import QThread, Qt
 
-from core.project import ProjectImage
 from .callbacks import ImageEditorCallbacks
 from .editor import ImageEditor
-from .tools.brushtool import BrushTool
-from .tools.maskbrushtool import MaskBrushTool
 from .. import imutils
 from ..widgets.layout import create_box_layout
 
