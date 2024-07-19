@@ -1,10 +1,22 @@
-from PyQt5 import QtWidgets
+import typing
+
+from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QSizePolicy
 
 from core.widgets.layout import create_box_layout, create_grid_layout
 
 
+class DescriptionTextEdit(QtWidgets.QTextEdit):
+    editingFinished = pyqtSignal()
+
+    def focusOutEvent(self, e: typing.Optional[QtGui.QFocusEvent]) -> None:
+        self.editingFinished.emit()
+        super().focusOutEvent(e)
+
+
 class ProjectInfoFrom(QtWidgets.QFrame):
+    dataChanged = pyqtSignal()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -19,28 +31,36 @@ class ProjectInfoFrom(QtWidgets.QFrame):
         self._sourceTypeRadioGroup.addButton(self._sourceTypeRadio_custom)
         self._sourceTypeRadioGroup.setExclusive(True)
         self._sourceTypeRadioGroup.buttonClicked.connect(self.updateFranchiseControls)
+        self._sourceTypeRadioGroup.buttonClicked.connect(self.dataChanged.emit)
 
         self._sourceType = QtWidgets.QComboBox(self)
         self._sourceType.setItemDelegate(QtWidgets.QStyledItemDelegate(self))
         self._sourceType.addItems(['Anime', 'Game', 'Franchise'])
         self._sourceType.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
+        self._sourceType.currentIndexChanged.connect(self.dataChanged.emit)
 
         self._sourceTypeCustom = QtWidgets.QLineEdit()
         self._sourceTypeCustom.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
+        self._sourceTypeCustom.editingFinished.connect(self.dataChanged.emit)
 
         self._characterName = QtWidgets.QLineEdit()
         self._characterName.setPlaceholderText('E.g. Sakura Haruno')
+        self._characterName.editingFinished.connect(self.dataChanged.emit)
+
         self._loadCharacterFromLora = QtWidgets.QCheckBox("Use character from LoRa")
         self._loadCharacterFromLora.stateChanged.connect(self.updateCharacterNameInput)
         self._loadCharacterFromLora.setVisible(False)
+        self._loadCharacterFromLora.toggled.connect(self.dataChanged.emit)
 
         self._characterNameLabel = QtWidgets.QLabel('Character Name:')
 
         self._sourceName = QtWidgets.QLineEdit()
         self._sourceName.setPlaceholderText("E.g. Naruto: Shippūden")
+        self._sourceName.editingFinished.connect(self.dataChanged.emit)
 
-        self._description = QtWidgets.QTextEdit()
+        self._description = DescriptionTextEdit()
         self._description.setPlaceholderText('write something...')
+        self._description.editingFinished.connect(self.dataChanged.emit)
 
         self.setLayout(create_box_layout([
             create_grid_layout([

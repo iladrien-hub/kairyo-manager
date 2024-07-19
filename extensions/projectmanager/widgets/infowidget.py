@@ -1,3 +1,4 @@
+import time
 from datetime import datetime
 
 from PyQt5 import QtWidgets
@@ -21,6 +22,7 @@ class InfoWidget(QtWidgets.QFrame):
         self._timeCreatedLabel = QtWidgets.QLabel()
 
         self._form = ProjectInfoFrom()
+        self._form.dataChanged.connect(self.save)
 
         self._scroll = QtWidgets.QScrollArea()
         self._scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -67,3 +69,16 @@ class InfoWidget(QtWidgets.QFrame):
 
     def sync(self):
         self.fill(KairyoApi.instance().storage.project)
+
+    def save(self):
+        project = KairyoApi.instance().storage.project
+        if not project:
+            return
+
+        project.meta.character = self._form.character()
+        project.meta.description = self._form.description()
+        project.meta.source = self._form.source()
+        project.meta.source_type = self._form.sourceType()
+        project.meta.custom_source_type = self._form.customSourceType()
+        project.meta.use_custom_source_type = self._form.useCustomSourceType()
+        project.meta.use_character_from_lora = self._form.useCharacterFromLora()
