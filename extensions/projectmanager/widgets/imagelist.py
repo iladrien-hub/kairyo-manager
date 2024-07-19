@@ -1,5 +1,7 @@
 import logging
+import os.path
 import queue
+import subprocess
 from enum import Enum
 from functools import partial
 from typing import List, Optional
@@ -329,7 +331,32 @@ class ProjectImageList(QtWidgets.QWidget):
         delete = menu.addAction('Delete')
         delete.triggered.connect(partial(self.on_delete_triggered, item.image))
 
+        menu.addSeparator()
+
+        open_in = menu.addMenu('Open In')
+        open_in_explorer = open_in.addAction('Show in Explorer')
+        open_in_explorer.triggered.connect(partial(self.on_open_in_explorer_triggered, item.image))
+
+        open_in_photoshop = open_in.addAction('Open in Photoshop')
+        photoshop_path = KairyoApi.instance().settings.value('path/PhotoshopPath').strip()
+        open_in_photoshop.setEnabled(bool(photoshop_path) and os.path.isfile(photoshop_path))
+        open_in_photoshop.triggered.connect(partial(self.on_open_in_photoshop_triggered, item.image))
+
+        open_in_default = open_in.addAction('Open in default program')
+        open_in_default.triggered.connect(partial(self.on_open_in_default_triggered, item.image))
+
         menu.exec(gpos)
 
     def on_delete_triggered(self, image: ProjectImage):
         KairyoApi.instance().remove_image(image.name)
+
+    def on_open_in_explorer_triggered(self, image: ProjectImage):
+        subprocess.Popen(f'explorer {image.path}')
+
+    def on_open_in_photoshop_triggered(self, image: ProjectImage):
+        photoshop_path = KairyoApi.instance().settings.value('path/PhotoshopPath').strip()
+        if bool(photoshop_path) and os.path.isfile(photoshop_path):
+            subprocess.Popen(f'{photoshop_path} {os.path.join(image.path, "image.png")}')
+
+    def on_open_in_default_triggered(self, image: ProjectImage):
+        os.startfile(os.path.join(image.path, "image.png"))
