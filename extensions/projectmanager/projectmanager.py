@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
@@ -16,6 +17,7 @@ class ProjectManagerExtension(KairyoExtension):
         super().__init__(api)
 
         self._main_tab = ProjectManagerTab(api.user_interface.window, self.api.settings)
+        self._open_in_photoshop = None
 
     def on_setup_ui(self):
         # Registering new tab
@@ -33,6 +35,12 @@ class ProjectManagerExtension(KairyoExtension):
         open_project = menu.addAction('Open...')
         open_project.triggered.connect(self.on_open_project)
         open_project.setIcon(load_icon(':projectmanager/folder-open.svg', self.api.theme.text_200))
+
+        menu = self.api.user_interface.add_menu('Edit')
+        self._open_in_photoshop = menu.addAction('Open Current Image in Photoshop')
+        self._open_in_photoshop.setEnabled(False)
+        self._open_in_photoshop.setShortcut("E")
+        self._open_in_photoshop.triggered.connect(self.on_open_in_photoshop)
 
         self.api.storage.imageChanged.connect(self.on_storage_imageChanged)
         self.api.watchdog.fileChanged.connect(self.on_watchdog_fileChanged)
@@ -75,6 +83,16 @@ class ProjectManagerExtension(KairyoExtension):
 
     def on_storage_imageChanged(self):
         self._main_tab.editor().setImage(self.api.storage.image)
+        self._open_in_photoshop.setEnabled(bool(self.api.storage.image))
+
+    def on_open_in_photoshop(self):
+        image = self.api.storage.image
+        if not image:
+            return
+
+        photoshop_path = self.api.settings.value('path/PhotoshopPath').strip()
+        if bool(photoshop_path) and os.path.isfile(photoshop_path):
+            subprocess.Popen(f'{photoshop_path} {os.path.join(image.path, "image.png")}')
 
     def on_watchdog_fileChanged(self, name: str):
         self._main_tab.editor().reloadFromDisk(self.api.storage.project.get_image(name))

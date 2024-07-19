@@ -341,6 +341,7 @@ class ProjectImageList(QtWidgets.QWidget):
         photoshop_path = KairyoApi.instance().settings.value('path/PhotoshopPath').strip()
         open_in_photoshop.setEnabled(bool(photoshop_path) and os.path.isfile(photoshop_path))
         open_in_photoshop.triggered.connect(partial(self.on_open_in_photoshop_triggered, item.image))
+        open_in_photoshop.setShortcut("E")
 
         open_in_default = open_in.addAction('Open in default program')
         open_in_default.triggered.connect(partial(self.on_open_in_default_triggered, item.image))

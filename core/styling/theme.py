@@ -90,6 +90,9 @@ class DarkTheme(object):
                 'min-width': '269px',
                 'height': '13px'
             }),
+            Style('QMenu::item:disabled', {
+                'color': self.text_100,
+            }),
             Style('QMenu::icon', {
                 'padding-left': '12px'
             }),
