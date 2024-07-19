@@ -9,7 +9,7 @@ from .brush.base import BaseBrush
 from .callbacks import ImageEditorCallbacks
 from .canvas import Canvas
 from .event import MousePressEvent, MouseMoveEvent, MouseReleaseEvent
-from .historymanager import HistoryManager
+from .historymanager import HistoryManager, HistoryItem
 from .layergroup import LayerGroup
 from .layers.base import BaseLayer
 from .layers.imagelayer import ImageLayer
@@ -44,14 +44,23 @@ class ImageEditor:
 
         self.__eventQueue = queue.Queue()
 
+    def render(self):
+        return self.__layers.render()
+
     def history(self):
         return self.__historyManager
 
+    def saveToHistory(self, item: HistoryItem):
+        self.__historyManager.save(item)
+        self.__callbacks.historyUpdated()
+
     def undo(self):
         self.__imageCanvas.markOutdated(self.__historyManager.undo())
+        self.__callbacks.historyUpdated()
 
     def redo(self):
         self.__imageCanvas.markOutdated(self.__historyManager.redo())
+        self.__callbacks.historyUpdated()
 
     def currentLayer(self) -> Optional[BaseLayer]:
         return self.__layers.currentLayer()
@@ -88,8 +97,14 @@ class ImageEditor:
         tool.setEditor(self)
         return tool
 
-    def setActiveTool(self, tool: BaseTool):
+    def setActiveTool(self, tool: Optional[BaseTool]):
         self.__toolManager.setActiveTool(tool)
+
+    def activeTool(self) -> BaseTool:
+        return self.__toolManager.activeTool()
+
+    def tool(self, cls) -> BaseTool:
+        return self.__toolManager.tool(cls)
 
     def resetTool(self):
         self.__toolManager.setActiveTool(None)

@@ -1,5 +1,7 @@
 from typing import Optional, List
 
+import cv2
+
 from core.minipaint.layers.base import BaseLayer
 
 
@@ -30,3 +32,7 @@ class LayerGroup:
 
     def currentLayer(self) -> BaseLayer:
         return self.__currentLayer
+
+    def render(self):
+        current = self.__layers[0].getRGBA()
+        return current

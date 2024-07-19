@@ -158,6 +158,10 @@ class CanvasWidget(QtWidgets.QFrame):
         self.__keepFit = True
         self.update()
 
+    def fitIntoViewIfNeeded(self):
+        if self.__keepFit:
+            self.fitIntoView()
+
     def resizeEvent(self, a0) -> None:
         if self.__keepFit:
             self.fitIntoView()
@@ -288,16 +292,24 @@ class ImageEditorWidget(QtWidgets.QWidget, ImageEditorCallbacks):
 
         self.__undo = QtWidgets.QShortcut("Ctrl+Z", self, self.on_undo_triggered)
         self.__redo = QtWidgets.QShortcut("Ctrl+R", self, self.on_redo_triggered)
+        self.__fitIntoView = QtWidgets.QShortcut("Ctrl+0", self, self.on_fitIntoView_triggered)
+        self.__originalScale = QtWidgets.QShortcut("Ctrl+1", self, self.on_resetScale_triggered)
 
     def activeEditor(self) -> Optional[ImageEditor]:
         return self.__activeEditor
 
     def setActiveEditor(self, editor: Optional[ImageEditor]):
         self.__activeEditor = editor
-        self.__canvas.updateCursor()
+        self.updateCursor()
 
     def fitIntoView(self):
         self.__canvas.fitIntoView()
+
+    def fitIntoViewIfNeeded(self):
+        self.__canvas.fitIntoViewIfNeeded()
+
+    def updateCursor(self):
+        self.__canvas.updateCursor()
 
     def renderCanvas(self):
         self.__canvas.update()
@@ -315,3 +327,15 @@ class ImageEditorWidget(QtWidgets.QWidget, ImageEditorCallbacks):
             return
 
         editor.redo()
+
+    def on_fitIntoView_triggered(self):
+        self.fitIntoView()
+
+    def on_resetScale_triggered(self):
+        if self.__activeEditor is None:
+            return
+
+        viewport = self.__activeEditor.viewport()
+        center = viewport.center()
+        viewport.setScale(1)
+        viewport.moveCenter(center)

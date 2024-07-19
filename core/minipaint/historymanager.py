@@ -38,3 +38,9 @@ class HistoryManager:
         self.pointer += 1
         self.history[self.pointer].redo()
         return True
+
+    def hasRedo(self):
+        return self.pointer < len(self.history) - 1
+
+    def hasUndo(self):
+        return self.pointer >= 0

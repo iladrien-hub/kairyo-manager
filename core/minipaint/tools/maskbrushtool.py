@@ -19,7 +19,7 @@ class MaskBrushTool(BrushTool):
             result = self.apply(pixels, self._buffer)
             layer.setPixelData(result)
             editor.imageCanvas().markOutdated(True)
-            editor.history().save(BrushToolHistoryItem(
+            editor.saveToHistory(BrushToolHistoryItem(
                 layer,
                 pixels,
                 result

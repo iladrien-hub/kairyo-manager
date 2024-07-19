@@ -10,9 +10,9 @@ from core.styling import make_stylesheet, Style
 from core.styling.icon import load_icon
 from core.widgets import TabWidget
 from core.widgets.splitter import Splitter
+from editor.editor import EditorWidget
 from .history import ImageHistoryWidget
 from .infowidget import InfoWidget
-from ..editor.view.editor import EditorWidget
 from .imagelist import ProjectImageList
 
 

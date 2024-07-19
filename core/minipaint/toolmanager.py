@@ -22,6 +22,11 @@ class ToolManager:
     def activeTool(self):
         return self.__activeTool
 
+    def tool(self, cls):
+        for item in self.__tools:
+            if isinstance(item, cls):
+                return item
+
     def mousePressEvent(self, p: QtCore.QPoint):
         if self.__activeTool is not None:
             return self.__activeTool.mousePressEvent(p)
