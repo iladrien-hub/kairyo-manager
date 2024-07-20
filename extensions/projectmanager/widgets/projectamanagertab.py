@@ -14,6 +14,7 @@ from editor.editor import EditorWidget
 from .history import ImageHistoryWidget
 from .infowidget import InfoWidget
 from .imagelist import ProjectImageList
+from .parameters import ParametersWidget
 
 
 class ProjectManagerTab(QtWidgets.QWidget):
@@ -52,6 +53,9 @@ class ProjectManagerTab(QtWidgets.QWidget):
         self._info = InfoWidget(self)
         self._info.setObjectName('projectInfo')
 
+        self._parameters = ParametersWidget()
+        self._parameters.setObjectName('parametersInfo')
+
         self._history = ImageHistoryWidget(self)
         self._history.setObjectName('imageHistoryView')
 
@@ -75,6 +79,11 @@ class ProjectManagerTab(QtWidgets.QWidget):
         self._leftTabs.setTabIcon(
             self._leftTabs.addTab(self._info, "Info"),
             load_icon(":/projectmanager/memo-circle-info.svg", "#cacaca")
+        )
+
+        self._leftTabs.setTabIcon(
+            self._leftTabs.addTab(self._parameters, "Parameters"),
+            load_icon(":/projectmanager/sliders-simple.svg", "#cacaca")
         )
 
         q_label = QLabel("Bookmarks (?)...")

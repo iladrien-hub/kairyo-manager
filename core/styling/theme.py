@@ -420,7 +420,7 @@ class DarkTheme(object):
                 'border-left': f'1px solid {self.surface_50}',
                 'border-top': f'1px solid {self.surface_50}',
             }),
-            Style('QFrame#projectInfo', {
+            Style('QFrame#projectInfo, ParametersWidget', {
                 'border-right': f'1px solid {self.surface_50}',
                 'padding-right': '1px'
             }),
@@ -459,6 +459,20 @@ class DarkTheme(object):
             Style('EditorWidget CanvasWidget', {
                 'border-top': f'1px solid {self.surface_50}',
                 'background': self.surface_100,
+            }),
+            Style('PromptHeaderWidget > QLabel', {
+                'font-weight': 'bold'
+            }),
+            Style('PromptBodyWidget', {
+                'font-family': 'Roboto Mono',
+                'background': self.surface_200,
+                'padding': '4px'
+            }),
+            Style('ParamWidget > #paramTitle', {
+                'font-weight': 'bold'
+            }),
+            Style('ParamWidget > #paramValue', {
+                'font-family': 'Roboto Mono',
             }),
             # endregion
             # region: progress-ext

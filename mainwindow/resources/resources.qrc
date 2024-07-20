@@ -14,5 +14,6 @@
     <file>plus.svg</file>
     <file>minus.svg</file>
     <file>Icon512.ico</file>
+    <file>RobotoMono-Regular.ttf</file>
   </qresource>
 </RCC>

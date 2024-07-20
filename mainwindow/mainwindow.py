@@ -1,6 +1,6 @@
 import logging
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtCore import QEvent
 
 from core.api import KairyoApi
@@ -19,6 +19,8 @@ class MainWindow(FramelessWindow):
         self.tabs.setTabPosition(QtWidgets.QTabWidget.TabPosition.East)
 
         self.addContentWidget(self.tabs)
+
+        QtGui.QFontDatabase.addApplicationFont(":/mainwindow/RobotoMono-Regular.ttf")
 
     def init(self):
         api = KairyoApi.instance()
